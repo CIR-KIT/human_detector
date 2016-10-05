@@ -23,6 +23,16 @@ git clone git@github.com:CIR-KIT/TC2016.git
 ```
 チームメンバーであれば``ssh``でクローンできるので、もし失敗する場合には`ssh`の設定を見直すか、チームメンバーに参加できているかを確認してください。  
 
----
+3. 他のパッケージのダウンロード
+`wstool`を使って必要なパッケージをダウンロードしてきます。
+```bash
+cd tc2016_ws/
+wstool init src TC2016_for_thirdrobot/third_robot.rosinstall
+```
+他のパッケージのアップデートは
+```bash
+cd tc2016_ws
+wstool update -t src
+```
+でできます。
 
-Tsukuba Challenge 2015のときと違い、ロボット毎にリポジトリを分けているので、どういう運用にするか、まだ決まっていません。決まり次第、書きます。  
