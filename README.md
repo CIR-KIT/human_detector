@@ -27,7 +27,7 @@ git clone git@github.com:CIR-KIT/TC2016.git
 `wstool`を使って必要なパッケージをダウンロードしてきます。
 ```bash
 cd tc2016_ws/
-wstool init src TC2016_for_thirdrobot/third_robot.rosinstall
+wstool init src src/TC2016_for_thirdrobot/third_robot.rosinstall
 ```
 他のパッケージのアップデートは
 ```bash
@@ -36,3 +36,9 @@ wstool update -t src
 ```
 でできます。
 
+.rosinstallファイルに追記した場合は
+```
+cd tc2016_ws
+wstool merge -t src src/TC2016_for_thirdrobot/third_robot.rosinstall
+```
+とします。
