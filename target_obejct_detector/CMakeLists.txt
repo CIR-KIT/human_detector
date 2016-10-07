@@ -18,6 +18,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 find_package(OpenCV REQUIRED)
+find_package(PCL 1.2 REQUIRED)
 
 catkin_package(
 #  INCLUDE_DIRS include
@@ -26,10 +27,14 @@ catkin_package(
 #  DEPENDS system_lib
 )
 
+link_directories(${PCL_LIBRARY_DIRS})
+add_definitions(${PCL_DEFINITIONS})
+
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
+  ${PCL_INCLUDE_DIRS}
 )
 
 add_executable(
@@ -43,3 +48,25 @@ target_link_libraries(target_object_detector_node
   ${OpenCV_LIBRARIES}
 )
 
+
+add_executable(
+  segment_cluster_creator_node
+  src/segment_cluster_creator.cpp
+  src/segment_cluster_creator_node.cpp
+  )
+
+target_link_libraries(segment_cluster_creator_node
+  ${catkin_LIBRARIES}
+  ${OpenCV_LIBRARIES}
+)
+
+add_executable(
+  train_data_create_tool
+  src/train_data_create_tool.cpp
+  )
+
+target_link_libraries(train_data_create_tool
+  ${catkin_LIBRARIES}
+  ${OpenCV_LIBRARIES}
+  ${PCL_LIBRARIES}
+)
