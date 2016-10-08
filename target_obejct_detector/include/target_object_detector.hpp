@@ -40,6 +40,8 @@
 
 #include <jsk_recognition_msgs/BoundingBoxArray.h>
 
+#include "../src/libsvm/svm.h"
+
 using namespace pcl;
 
 class EuclideanCluster {
@@ -69,6 +71,9 @@ private:
   int maxSize_;
 
   pcl::PointXYZ crop_min_, crop_max_;
+
+  std::string svm_modele_path_;
+  svm_model *model_;
 };
 
 #endif /* EUCLIDEAN_CLUSTER_H */

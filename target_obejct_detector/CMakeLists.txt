@@ -41,6 +41,7 @@ add_executable(
   target_object_detector_node
   src/target_object_detector.cpp
   src/target_object_detector_node.cpp
+  src/libsvm/svm.cpp
   )
 
 target_link_libraries(target_object_detector_node

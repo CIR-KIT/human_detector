@@ -1,11 +1,19 @@
 #include <target_object_detector.hpp>
-
+#include <Eigen/Core>
+#include <Eigen/Eigen>
+#include <Eigen/Dense>
+#include <algorithm>
+#include "libsvm/svm.h"
+#include <ros/package.h>
 using namespace pcl;
 
+void feature_calculation(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud,
+                         svm_node *features);
+
 EuclideanCluster::EuclideanCluster(ros::NodeHandle nh, ros::NodeHandle n)
-    : nh_(nh),
-      rate_(n.param("loop_rate", 10)),
-      frame_id_(n.param<std::string>("clustering_frame_id", "base_link"))
+  : nh_(nh),
+    rate_(n.param("loop_rate", 10)),
+    frame_id_(n.param<std::string>("clustering_frame_id", "base_link"))
 {
   source_pc_sub_ = nh_.subscribe(n.param<std::string>("source_pc_topic_name", "/hokuyo3d/hokuyo_cloud2"), 1, &EuclideanCluster::EuclideanCallback, this);
   fileterd_cloud_pub_ = nh_.advertise<sensor_msgs::PointCloud2>(n.param<std::string>("filtered_pc_topic_name", "/filtered_pointcloud"), 1);
@@ -22,6 +30,14 @@ EuclideanCluster::EuclideanCluster(ros::NodeHandle nh, ros::NodeHandle n)
   n.param<float>("crop_y_max", crop_max_.y, 5.5);
   n.param<float>("crop_z_min", crop_min_.z, -0.1);
   n.param<float>("crop_z_max", crop_max_.z, 0.5);
+  n.param<std::string>("svm_modele_path", svm_modele_path_,
+                       ros::package::getPath("target_object_detector")
+                       + "/model/train.csv.model");
+  if((model_=svm_load_model(svm_modele_path_.c_str()))==0)
+  {
+    fprintf(stderr,"can't open model file %s\n",svm_modele_path_.c_str());
+    exit(1);
+  }
 }
 
 void EuclideanCluster::EuclideanCallback(
@@ -121,19 +137,26 @@ void EuclideanCluster::Clustering(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
 
   for (std::vector<pcl::PointIndices>::const_iterator it = cluster_indices.begin(); it != cluster_indices.end(); ++it) {
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_cluster(new pcl::PointCloud<pcl::PointXYZ>);
-    for (std::vector<int>::const_iterator pit = it->indices.begin(); pit != it->indices.end(); ++pit)
+    for (std::vector<int>::const_iterator pit = it->indices.begin(); pit != it->indices.end(); ++pit){
       cloud_cluster->points.push_back(cloud->points[*pit]);
-
+    }
     cloud_cluster->width = cloud_cluster->points.size();
     cloud_cluster->height = 1;
     cloud_cluster->is_dense = true;
 
-    // 一つのclusterをpushback
-    jsk_recognition_msgs::BoundingBox box;
-    box = MinAreaRect(cloud_cluster, j);
-    box_array.boxes.push_back(box);
-
-    j++;
+    //特徴量の計算
+    svm_node features[14];
+    feature_calculation(cloud_cluster, features);
+    ROS_INFO_STREAM("features are extracted");
+    int is_target_object = static_cast<int>( svm_predict( model_, features ) );
+    ROS_INFO_STREAM("is_target_object : " << is_target_object);
+    if (is_target_object == 1) {
+      // 一つのclusterをpushback
+      jsk_recognition_msgs::BoundingBox box;
+      box = MinAreaRect(cloud_cluster, j);
+      box_array.boxes.push_back(box);
+      j++;
+    }
   }
 
   // int clusterLength = clusterIndices.size();
@@ -319,6 +342,7 @@ jsk_recognition_msgs::BoundingBox EuclideanCluster::MinAreaRect(pcl::PointCloud<
 }
 
 
+
 void EuclideanCluster::run()
 {
   while(nh_.ok()){
@@ -326,3 +350,98 @@ void EuclideanCluster::run()
     rate_.sleep();
   }
 }
+
+
+void feature_calculation(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud,
+                         svm_node *features)
+  {
+    int n;
+    float f21,f22,f23,f24,f25,f26;
+    float v1, v2, v3;
+    double v11, v22, v33;
+    float f31,f32,f33,f34,f35,f36,f37;
+    pcl::PointXYZ min_point;
+    pcl::PointXYZ max_point;
+    std::vector<float> moment_of_inertia;
+    std::vector<float> eccentricity;
+    Eigen::Matrix3f cmat;
+    Eigen::Vector4f xyz_centroid;
+    EIGEN_ALIGN16 Eigen::Matrix3f covariance_matrix;
+    pcl::MomentOfInertiaEstimation <pcl::PointXYZ> feature_extractor;
+    feature_extractor.setInputCloud (cloud);
+    feature_extractor.compute ();
+    feature_extractor.getMomentOfInertia (moment_of_inertia);
+    feature_extractor.getEccentricity (eccentricity);
+    feature_extractor.getAABB (min_point, max_point);
+    pcl::compute3DCentroid (*cloud, xyz_centroid);
+    pcl::computeCovarianceMatrix (*cloud, xyz_centroid, covariance_matrix);
+    n = cloud->points.size();
+    f21 = covariance_matrix (0,0) / (n - 1);
+    f22 = covariance_matrix (0,1) / (n - 1);
+    f23 = covariance_matrix (0,2) / (n - 1);
+    f24 = covariance_matrix (1,1) / (n - 1);
+    f25 = covariance_matrix (1,2) / (n - 1);
+    f26 = covariance_matrix (2,2) / (n - 1);
+    cmat (0,0) = f21;
+    cmat (0,1) = f22;
+    cmat (0,2) = f23;
+    cmat (1,0) = f22;
+    cmat (1,1) = f24;
+    cmat (1,2) = f25;
+    cmat (2,0) = f23;
+    cmat (2,1) = f25;
+    cmat (2,2) = f26;
+    Eigen::EigenSolver<Eigen::MatrixXf> es(cmat, false);
+    std::complex<double> lambda1 = es.eigenvalues()[0];
+    std::complex<double> lambda2 = es.eigenvalues()[1];
+    std::complex<double> lambda3 = es.eigenvalues()[2];
+    v11 = lambda1.real();
+    v22 = lambda2.real();
+    v33 = lambda3.real();
+    std::vector<double> v;
+    v.push_back (v11);
+    v.push_back (v22);
+    v.push_back (v33);
+    std::sort(v.begin(), v.end() );
+    v3 = v[0];
+    v2 = v[1];
+    v1 = v[2];
+    v.clear();
+
+    double nnn = v1 * v2 * v3;
+    f31 = (v1 - v2) / v1;
+    f32 = (v2 - v3) / v1;
+    f33 = v3 / v1;
+    f34 = pow(nnn, 1.0 / 3.0);
+    f35 = (v1 - v3) / v1;
+    f36 = -(v1 * log(v1) + v2 * log(v2) + v3 * log(v3));
+    f37 = v3 / (v1 + v2 + v3);
+
+    features[0].value = f21;
+    features[1].value = f22;
+    features[2].value = f23;
+    features[3].value = f24;
+    features[4].value = f25;
+    features[5].value = f26;
+    features[6].value = f31;
+    features[7].value = f32;
+    features[8].value = f33;
+    features[9].value = f34;
+    features[10].value = f35;
+    features[11].value = f36;
+    features[12].value = f37;
+    features[0].index = 1;
+    features[1].index = 2;
+    features[2].index = 3;
+    features[3].index = 4;
+    features[4].index = 5;
+    features[5].index = 6;
+    features[6].index = 7;
+    features[7].index = 8;
+    features[8].index = 9;
+    features[9].index = 10;
+    features[10].index = 11;
+    features[11].index = 12;
+    features[12].index = 13;
+    features[13].index = -1;
+  }
