@@ -48,11 +48,13 @@ class EuclideanCluster {
 public:
   EuclideanCluster(ros::NodeHandle nh, ros::NodeHandle n);
   void EuclideanCallback(const sensor_msgs::PointCloud2::ConstPtr &source_pc);
-  void CropBox(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, pcl::PointXYZ min, pcl::PointXYZ max);
-  void Clustering(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
-  jsk_recognition_msgs::BoundingBox MomentOfInertia_AABB(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, int cluster_cnt);
-  jsk_recognition_msgs::BoundingBox MomentOfInertia_OBB(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
-  jsk_recognition_msgs::BoundingBox MinAreaRect(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, int cluster_cnt);
+  void CropBox(pcl::PointCloud<pcl::PointXYZI>::Ptr cloud, pcl::PointXYZ min, pcl::PointXYZ max);
+  void Clustering(pcl::PointCloud<pcl::PointXYZI>::Ptr cloud);
+  void read_scaling_parameters(std::string scaling_parameter_file);
+  void normlize_features(svm_node *features);
+  void feature_calculation(pcl::PointCloud<pcl::PointXYZI>::Ptr cloud,
+                           svm_node *features);
+  jsk_recognition_msgs::BoundingBox MinAreaRect(pcl::PointCloud<pcl::PointXYZI>::Ptr cloud, int cluster_cnt);
   void run();
 
 private:
@@ -74,6 +76,10 @@ private:
 
   std::string svm_modele_path_;
   svm_model *model_;
+  std::vector<float> feature_max_;
+  std::vector<float> feature_min_;
+  float feature_lower_;
+  float feature_upper_;
 };
 
 #endif /* EUCLIDEAN_CLUSTER_H */

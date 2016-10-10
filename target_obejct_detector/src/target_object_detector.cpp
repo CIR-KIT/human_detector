@@ -7,9 +7,6 @@
 #include <ros/package.h>
 using namespace pcl;
 
-void feature_calculation(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud,
-                         svm_node *features);
-
 EuclideanCluster::EuclideanCluster(ros::NodeHandle nh, ros::NodeHandle n)
   : nh_(nh),
     rate_(n.param("loop_rate", 10)),
@@ -38,6 +35,7 @@ EuclideanCluster::EuclideanCluster(ros::NodeHandle nh, ros::NodeHandle n)
     fprintf(stderr,"can't open model file %s\n",svm_modele_path_.c_str());
     exit(1);
   }
+  read_scaling_parameters("todo");
 }
 
 void EuclideanCluster::EuclideanCallback(
@@ -53,16 +51,16 @@ void EuclideanCluster::EuclideanCallback(
   }
 
   // sensor_msgs::PointCloud2 → pcl::PointCloud
-  pcl::PointCloud<PointXYZ> pcl_source;
+  pcl::PointCloud<PointXYZI> pcl_source;
   pcl::fromROSMsg(trans_pc, pcl_source);
-  pcl::PointCloud<PointXYZ>::Ptr pcl_source_ptr(new pcl::PointCloud<PointXYZ>(pcl_source));
+  pcl::PointCloud<PointXYZI>::Ptr pcl_source_ptr(new pcl::PointCloud<PointXYZI>(pcl_source));
 
   // 点群の中からnanを消す
   // std::vector<int> dummy;
   // pcl::removeNaNFromPointCloud(*pcl_source_ptr, *pcl_source_ptr, dummy);
 
   // Create the filtering object
-  pcl::StatisticalOutlierRemoval<pcl::PointXYZ> sor;
+  pcl::StatisticalOutlierRemoval<pcl::PointXYZI> sor;
   sor.setInputCloud (pcl_source_ptr);
   sor.setMeanK (100);
   sor.setStddevMulThresh (0.1);
@@ -82,7 +80,7 @@ void EuclideanCluster::EuclideanCallback(
   Clustering(pcl_source_ptr);
 }
 
-void EuclideanCluster::CropBox(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud,
+void EuclideanCluster::CropBox(pcl::PointCloud<pcl::PointXYZI>::Ptr cloud,
                                pcl::PointXYZ min, pcl::PointXYZ max) {
   Eigen::Vector4f minPoint;
 
@@ -107,24 +105,24 @@ void EuclideanCluster::CropBox(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud,
 
   Eigen::Affine3f boxTransform;
 
-  pcl::CropBox<pcl::PointXYZ> cropFilter;
+  pcl::CropBox<pcl::PointXYZI> cropFilter;
   cropFilter.setInputCloud(cloud);
   cropFilter.setMin(minPoint);
   cropFilter.setMax(maxPoint);
   cropFilter.setTranslation(boxTranslatation);
   cropFilter.setRotation(boxRotation);
 
-  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered(new pcl::PointCloud<pcl::PointXYZ>());
+  pcl::PointCloud<pcl::PointXYZI>::Ptr cloud_filtered(new pcl::PointCloud<pcl::PointXYZI>());
   cropFilter.filter(*cloud_filtered);
-  pcl::copyPointCloud<pcl::PointXYZ, pcl::PointXYZ>(*cloud_filtered, *cloud);
+  pcl::copyPointCloud<pcl::PointXYZI, pcl::PointXYZI>(*cloud_filtered, *cloud);
 }
 
-void EuclideanCluster::Clustering(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
-  pcl::search::KdTree<pcl::PointXYZ>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZ>);
+void EuclideanCluster::Clustering(pcl::PointCloud<pcl::PointXYZI>::Ptr cloud) {
+  pcl::search::KdTree<pcl::PointXYZI>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZI>);
   tree->setInputCloud(cloud);
 
   std::vector<pcl::PointIndices> cluster_indices;
-  pcl::EuclideanClusterExtraction<pcl::PointXYZ> ec;
+  pcl::EuclideanClusterExtraction<pcl::PointXYZI> ec;
   ec.setClusterTolerance(clusterTolerance_);
   ec.setMinClusterSize(minSize_);
   ec.setMaxClusterSize(maxSize_);
@@ -136,7 +134,7 @@ void EuclideanCluster::Clustering(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
   jsk_recognition_msgs::BoundingBoxArray box_array; // clustering結果をぶち込む配列
 
   for (std::vector<pcl::PointIndices>::const_iterator it = cluster_indices.begin(); it != cluster_indices.end(); ++it) {
-    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_cluster(new pcl::PointCloud<pcl::PointXYZ>);
+    pcl::PointCloud<pcl::PointXYZI>::Ptr cloud_cluster(new pcl::PointCloud<pcl::PointXYZI>);
     for (std::vector<int>::const_iterator pit = it->indices.begin(); pit != it->indices.end(); ++pit){
       cloud_cluster->points.push_back(cloud->points[*pit]);
     }
@@ -171,114 +169,16 @@ void EuclideanCluster::Clustering(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
   cluster_indices.clear();
 }
 
-jsk_recognition_msgs::BoundingBox EuclideanCluster::MomentOfInertia_AABB(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, int cluster_cnt) {
-  pcl::MomentOfInertiaEstimation<pcl::PointXYZ> feature_extractor;
-  feature_extractor.setInputCloud(cloud);
-  feature_extractor.compute();
-
-  std::vector<float> moment_of_inertia;
-  std::vector<float> eccentricity;
-  pcl::PointXYZ min_point_AABB;
-  pcl::PointXYZ max_point_AABB;
-
-  geometry_msgs::Pose pose;
-  geometry_msgs::Vector3 size;
-
-  feature_extractor.getMomentOfInertia(moment_of_inertia);
-  feature_extractor.getEccentricity(eccentricity);
-  feature_extractor.getAABB(min_point_AABB, max_point_AABB);
-
-  pose.position.x = (min_point_AABB.x + max_point_AABB.x) / 2.0;
-  pose.position.y = (min_point_AABB.y + max_point_AABB.y) / 2.0;
-  pose.position.z = (min_point_AABB.z + max_point_AABB.z) / 2.0;
-  // std::cout << pose.position.x << ", " << pose.position.y << ", " << pose.position.z << std::endl;
-
-  size.x = max_point_AABB.x - min_point_AABB.x;
-  size.y = max_point_AABB.y - min_point_AABB.y;
-  size.z = max_point_AABB.z - min_point_AABB.z;
-  // std::cout << size.x << ", " << size.y << ", " << size.z << std::endl;
-  // std::cout << std::endl;
-
-  // TFの名前付け
-  std::stringstream ss;
-  std::string object_name;
-  ss << cluster_cnt;
-  object_name = "object_" + ss.str();
-
-  br_.sendTransform(tf::StampedTransform(
-      tf::Transform(
-          tf::Quaternion(0, 0, 0, 1),
-          tf::Vector3(pose.position.x, pose.position.y, max_point_AABB.z)),
-          ros::Time::now(), "base_link", object_name));
-
-  jsk_recognition_msgs::BoundingBox box;
-  box.header.frame_id = frame_id_;
-  box.pose = pose;
-  box.dimensions = size;
-  box.label = cluster_cnt;
-
-  return box;
-}
-
-jsk_recognition_msgs::BoundingBox EuclideanCluster::MomentOfInertia_OBB(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) {
-  pcl::MomentOfInertiaEstimation<pcl::PointXYZ> feature_extractor;
-  feature_extractor.setInputCloud(cloud);
-  feature_extractor.compute();
-
-  std::vector<float> moment_of_inertia;
-  std::vector<float> eccentricity;
-  pcl::PointXYZ min_point_OBB;
-  pcl::PointXYZ max_point_OBB;
-  pcl::PointXYZ position_OBB;
-  Eigen::Matrix3f rotational_matrix_OBB;
-  float major_value, middle_value, minor_value;
-  Eigen::Vector3f major_vector, middle_vector, minor_vector;
-  Eigen::Vector3f mass_center;
-
-  geometry_msgs::Pose pose;
-  geometry_msgs::Vector3 size;
-
-  feature_extractor.getMomentOfInertia(moment_of_inertia);
-  feature_extractor.getEccentricity(eccentricity);
-  feature_extractor.getOBB(min_point_OBB, max_point_OBB, position_OBB, rotational_matrix_OBB);
-  feature_extractor.getEigenValues(major_value, middle_value, minor_value);
-  feature_extractor.getEigenVectors(major_vector, middle_vector, minor_vector);
-  feature_extractor.getMassCenter(mass_center);
-  Eigen::Quaternionf quat(rotational_matrix_OBB);
-
-  pose.position.x = mass_center(0);
-  pose.position.y = mass_center(1);
-  pose.position.z = mass_center(2);
-  pose.orientation.x = quat.x();
-  pose.orientation.y = quat.y();
-  pose.orientation.z = quat.z();
-  pose.orientation.w = quat.w();
-  // std::cout << pose.position.x << ", " << pose.position.y << ", " << pose.position.z << std::endl;
-
-  size.x = max_point_OBB.x - min_point_OBB.x;
-  size.y = max_point_OBB.y - min_point_OBB.y;
-  size.z = max_point_OBB.z - min_point_OBB.z;
-  // std::cout << size.x << ", " << size.y << ", " << size.z << std::endl;
-  // std::cout << std::endl;
-
-  jsk_recognition_msgs::BoundingBox box;
-  box.header.frame_id = frame_id_;
-  box.pose = pose;
-  box.dimensions = size;
-
-  return box;
-}
-
-jsk_recognition_msgs::BoundingBox EuclideanCluster::MinAreaRect(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, int cluster_cnt){
+jsk_recognition_msgs::BoundingBox EuclideanCluster::MinAreaRect(pcl::PointCloud<pcl::PointXYZI>::Ptr cloud, int cluster_cnt){
   // PCLによる点群の最大最小エリア取得
-  pcl::MomentOfInertiaEstimation<pcl::PointXYZ> feature_extractor;
+  pcl::MomentOfInertiaEstimation<pcl::PointXYZI> feature_extractor;
   feature_extractor.setInputCloud(cloud);
   feature_extractor.compute();
 
   std::vector<float> moment_of_inertia;
   std::vector<float> eccentricity;
-  pcl::PointXYZ min_point_AABB;
-  pcl::PointXYZ max_point_AABB;
+  pcl::PointXYZI min_point_AABB;
+  pcl::PointXYZI max_point_AABB;
 
   geometry_msgs::Pose pose;
   geometry_msgs::Vector3 size;
@@ -352,7 +252,7 @@ void EuclideanCluster::run()
 }
 
 
-void feature_calculation(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud,
+void EuclideanCluster::feature_calculation(pcl::PointCloud<pcl::PointXYZI>::Ptr cloud,
                          svm_node *features)
   {
     int n;
@@ -360,14 +260,14 @@ void feature_calculation(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud,
     float v1, v2, v3;
     double v11, v22, v33;
     float f31,f32,f33,f34,f35,f36,f37;
-    pcl::PointXYZ min_point;
-    pcl::PointXYZ max_point;
+    pcl::PointXYZI min_point;
+    pcl::PointXYZI max_point;
     std::vector<float> moment_of_inertia;
     std::vector<float> eccentricity;
     Eigen::Matrix3f cmat;
     Eigen::Vector4f xyz_centroid;
     EIGEN_ALIGN16 Eigen::Matrix3f covariance_matrix;
-    pcl::MomentOfInertiaEstimation <pcl::PointXYZ> feature_extractor;
+    pcl::MomentOfInertiaEstimation <pcl::PointXYZI> feature_extractor;
     feature_extractor.setInputCloud (cloud);
     feature_extractor.compute ();
     feature_extractor.getMomentOfInertia (moment_of_inertia);
@@ -444,4 +344,63 @@ void feature_calculation(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud,
     features[11].index = 12;
     features[12].index = 13;
     features[13].index = -1;
+    normlize_features(features);
+    for (int i = 0; i < 13; ++i) {
+      std::cout << features[i].value << ", ";
+    }
+    std::cout << "\n";
+
   }
+
+
+void EuclideanCluster::normlize_features(svm_node *features)
+{
+  for (int i = 0; i < 13; ++i) {
+    if (feature_max_[i] == feature_min_[i]) {
+      continue;
+    }
+    if(features[i].value == feature_min_[i]){
+      features[i].value = feature_lower_;
+    }else if(features[i].value == feature_max_[i]){
+      features[i].value = feature_upper_;
+    }else{
+      features[i].value = feature_lower_ + (feature_upper_ - feature_lower_)*
+        (features[i].value - feature_min_[i])/
+        (feature_max_[i] - feature_min_[i]);
+    }
+  }
+}
+
+//スケーリングバリューは今は直書きしてるけど余裕があれば読み込めるようにする
+void EuclideanCluster::read_scaling_parameters(std::string scaling_parameter_file)
+{
+  feature_lower_ = -1.0;
+  feature_upper_ = 1.0;
+  feature_max_.push_back(1.40893);
+  feature_max_.push_back(0.531125);
+  feature_max_.push_back(0.0988914);
+  feature_max_.push_back(1.20336);
+  feature_max_.push_back(0.10187);
+  feature_max_.push_back(0.0831377);
+  feature_max_.push_back(0.930749);
+  feature_max_.push_back(0.82591);
+  feature_max_.push_back(0.741988);
+  feature_max_.push_back(0.246874);
+  feature_max_.push_back(0.999884);
+  feature_max_.push_back(0.891591);
+  feature_max_.push_back(0.296347);
+
+  feature_min_.push_back(0.00109534);
+  feature_min_.push_back(-0.301029);
+  feature_min_.push_back(-0.105092);
+  feature_min_.push_back(0.00130988);
+  feature_min_.push_back(-0.0665549);
+  feature_min_.push_back(4.28304e-05);
+  feature_min_.push_back(0.0427169);
+  feature_min_.push_back(0.0110803);
+  feature_min_.push_back(0.000115789);
+  feature_min_.push_back(0.00232679);
+  feature_min_.push_back(0.258012);
+  feature_min_.push_back(-0.0749601);
+  feature_min_.push_back(8.93961e-05);
+}
