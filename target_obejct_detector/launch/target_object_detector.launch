@@ -1,0 +1,20 @@
+<launch>
+  <node name="target_object_detector" pkg="target_object_detector" type="target_object_detector_node" output="screen">
+    <param name="loop_rate" value="5" />
+    <!-- クラスタリングのしきい値 -->
+    <param name="clusterTolerance" value="0.3" />
+    <param name="minSize" value="50" />
+    <param name="maxSize" value="25000" />
+    <!-- クラスタリングを行うエリア -->
+    <param name="crop_x_min" value="-35" />
+    <param name="crop_x_max" value="35" />
+    <param name="crop_y_min" value="-35" />
+    <param name="crop_y_max" value="35" />
+    <param name="crop_z_min" value="0.05" />
+    <param name="crop_z_max" value="15.5" />
+
+    <param name="source_pc_topic_name" value="/hokuyo3d/hokuyo_cloud2" />
+    <param name="box_name" value="/clustering_result" />
+    <param name="clustering_frame_id" value="base_link" />
+  </node>
+</launch>
