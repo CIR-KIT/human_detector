@@ -58,6 +58,7 @@ private:
     if( event.getKeyCode() && event.keyDown() ){
 
       if(event.getKeyCode() == 'y' || event.getKeyCode() == 'n'){
+        std::cout << "Key : " << event.getKeyCode() << std::endl;
         //ここで特徴量の計算
         std::vector<float> features;
         feature_calculation(buffer_cloud_, features);
@@ -79,7 +80,7 @@ private:
         std::cout << "cloud points : " << cloud->points.size() << std::endl;
         viewer_->updatePointCloud(cloud, "Cloud");
 
-        std::cout << "Key : " << event.getKeyCode() << std::endl;
+
       }
     }
   }
