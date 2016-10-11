@@ -1,4 +1,6 @@
 #include <segment_cluster_creator.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/date_time/posix_time/posix_time_io.hpp>
 
 using namespace pcl;
 
@@ -23,6 +25,9 @@ EuclideanCluster::EuclideanCluster(ros::NodeHandle nh, ros::NodeHandle n)
   n.param<float>("crop_y_max", crop_max_.y, 35.5);
   n.param<float>("crop_z_min", crop_min_.z, 0.05);
   n.param<float>("crop_z_max", crop_max_.z, 15.5);
+
+  boost::posix_time::ptime thistime = boost::posix_time::from_time_t(ros::Time::now().toSec());
+  output_file_prefix_ = to_simple_string(thistime) + "Cluster_";
 }
 
 void EuclideanCluster::EuclideanCallback(
@@ -130,7 +135,7 @@ void EuclideanCluster::Clustering(pcl::PointCloud<pcl::PointXYZI>::Ptr cloud) {
     cloud_cluster->is_dense = true;
 
     std::stringstream filename;
-    filename << accumulation_counter_;
+    filename << output_file_prefix_ << std::setw(4) << std::setfill('0') <<  accumulation_counter_;
     pcl::io::savePCDFileASCII ("./"+filename.str()+".pcd" , *cloud_cluster);
     // 一つのclusterをpushback
     j++;

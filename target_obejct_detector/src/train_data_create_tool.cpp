@@ -186,6 +186,11 @@ private:
         files.push_back(string(dirp->d_name));
     }
     closedir(dp);
+    sort( files_.begin(), files_.end() );
+    for (size_t i = 0; i < files_.size(); ++i) {
+      std::cout << files_[i] << std::endl;
+    }
+
     return 0;
   }
 

@@ -67,6 +67,9 @@ private:
   int maxSize_;
   int accumulation_counter_;
   pcl::PointXYZ crop_min_, crop_max_;
+
+  // output file name
+  std::string output_file_prefix_;
 };
 
 #endif /* EUCLIDEAN_CLUSTER_H */
