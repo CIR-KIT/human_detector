@@ -2,6 +2,9 @@
 
 This is for detecting taget object(human) at Tsukuba Challenge 2016.
 
+- [ ] コード重複多すぎ
+- [ ] スケーリングパラメータのハードコートは良くない
+
 ## Requirements
 
 - PCL 1.7+
