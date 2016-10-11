@@ -35,6 +35,8 @@ public:
     string filename = files_.back();
     std::cout << filename << std::endl;
     files_.pop_back();
+    std::cout << "==================================" << std::endl;
+    std::cout << "Now opening file is : " << filename << std::endl;
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZRGB>);
     pcl::io::loadPCDFile (filename, *cloud);
     //buffer_cloud_ = cloud->makeShared();
@@ -67,7 +69,8 @@ private:
         }
         //新しいポイントクラウドの読み込み
         string filename = files_.back();
-        std::cout << filename << std::endl;
+        std::cout << "==================================" << std::endl;
+        std::cout << "Now opening file is : " << filename << std::endl;
         files_.pop_back();
         pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZRGB>);
         pcl::io::loadPCDFile (filename, *cloud);
