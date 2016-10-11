@@ -24,12 +24,12 @@ Run the segmentation node in the directory.
 rosrun target_object_detector segment_cluster_creator_node
 ```
 Take a poingcloud by running the robot or play bag file include `pointclioud2` msg.
-You will get a lot of pcd files in the directory.
+You will get a lot of pcd files in the directory.  
 Next, classify the pcd files.
 ```bash
 rosrun target_object_detector train_data_create_tool
 ```
-After classified all pcd files, you will get `train.csv` in the directory.
+After classified all pcd files, you will get `train.csv` in the directory.  
 Third, making svm model.
 ```bash
 roscd targe_object_detector/src/libsvm/tools/
