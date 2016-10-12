@@ -1,8 +1,11 @@
 #include <target_object_recognizer.h>
 
-TargetObject::TargetObject(geometry_msgs::Pose pose)
-  : pose_(pose), counter_(0)
+TargetObject::TargetObject(geometry_msgs::PoseStamped transed_pose,
+                           jsk_recognition_msgs::BoundingBox box)
+  : box_(box), counter_(0)
 {
+  box_.header = transed_pose.header;
+  box_.pose = transed_pose.pose;
 }
 
 TargetObject::~TargetObject()
