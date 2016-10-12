@@ -14,12 +14,41 @@ TargetObject::~TargetObject()
 
 geometry_msgs::Pose TargetObject::getPose()
 {
-  return pose_;
+  return box_.pose;
 }
 
-void TargetObject::addPose(geometry_msgs::Pose new_pose)
+jsk_recognition_msgs::BoundingBox TargetObject::getBox()
 {
-  pose_ = new_pose;
+  box_.header.frame_id = "map";
+  return box_;
+}
+
+void TargetObject::addTargetObject(geometry_msgs::PoseStamped transed_pose,
+                                   jsk_recognition_msgs::BoundingBox new_box)
+{
+  jsk_recognition_msgs::BoundingBox box_buf; geometry_msgs::Pose buf;
+  box_buf.pose.position.x = box_.pose.position.x + transed_pose.pose.position.x;
+  box_buf.pose.position.y = box_.pose.position.y + transed_pose.pose.position.y;
+  box_buf.pose.orientation.x = box_.pose.orientation.x + transed_pose.pose.orientation.x;
+  box_buf.pose.orientation.y = box_.pose.orientation.y + transed_pose.pose.orientation.y;
+  box_buf.pose.orientation.z = box_.pose.orientation.z + transed_pose.pose.orientation.z;
+  box_buf.pose.orientation.w = box_.pose.orientation.w + transed_pose.pose.orientation.w;
+  box_buf.dimensions.x = box_.dimensions.x + new_box.dimensions.x;
+  box_buf.dimensions.y = box_.dimensions.y + new_box.dimensions.y;
+  box_buf.dimensions.z = box_.dimensions.z + new_box.dimensions.z;
+  box_.pose.position.x = box_buf.pose.position.x / 2.0;
+  box_.pose.position.y = box_buf.pose.position.y / 2.0;
+  box_.pose.orientation.x = box_buf.pose.orientation.x / 2.0;
+  box_.pose.orientation.y = box_buf.pose.orientation.y / 2.0;
+  box_.pose.orientation.z = box_buf.pose.orientation.z / 2.0;
+  box_.pose.orientation.w = box_buf.pose.orientation.w / 2.0;
+  box_.dimensions.x = box_buf.dimensions.x / 2.0;
+  box_.dimensions.y = box_buf.dimensions.y / 2.0;
+  box_.dimensions.z = box_buf.dimensions.z / 2.0;
+  // box_.pose = transed_pose.pose;
+  // box_.header = transed_pose.header;
+  // box_.dimensions = new_box.dimensions;
+  //  pose_ = new_pose;
 }
 
 int TargetObject::getCounter()
