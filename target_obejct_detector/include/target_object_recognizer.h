@@ -37,12 +37,15 @@ public:
   TargetObjectRecognizer(ros::NodeHandle nh);
   ~TargetObjectRecognizer();
   void detectedCallback(const jsk_recognition_msgs::BoundingBoxArray::ConstPtr &detected_objects);
+
   void run();
 private:
+  double calcDistance(geometry_msgs::Pose pose_1, geometry_msgs::Pose pose_2);
   ros::NodeHandle nh_;
   ros::Rate rate_;
   ros::Publisher recognized_pub_;
   ros::Subscriber detected_sub_;
+  tf::TransformListener tf_;
   std::vector<TargetObject> target_object_candidates_;
 };
 
