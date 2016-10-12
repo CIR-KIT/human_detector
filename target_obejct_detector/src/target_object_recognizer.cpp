@@ -91,3 +91,11 @@ void TargetObjectRecognizer::run()
     rate_.sleep();
   }
 }
+
+double TargetObjectRecognizer::calcDistance(geometry_msgs::Pose pose_1, geometry_msgs::Pose pose_2)
+{
+  double dist = sqrt(pow(pose_1.position.x - pose_2.position.x, 2)
+                     + pow(pose_1.position.y - pose_2.position.y, 2));
+  return dist;
+}
+
