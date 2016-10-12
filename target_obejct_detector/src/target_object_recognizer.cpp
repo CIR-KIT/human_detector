@@ -37,6 +37,7 @@ TargetObjectRecognizer::TargetObjectRecognizer(ros::NodeHandle nh)
     rate_(10)
 {
   detected_sub_ = nh_.subscribe("/clustering_result", 1, &TargetObjectRecognizer::detectedCallback, this);
+  recognized_pub_ = nh_.advertise<jsk_recognition_msgs::BoundingBoxArray>("/recognized_result", 1);
 }
 
 TargetObjectRecognizer::~TargetObjectRecognizer()
