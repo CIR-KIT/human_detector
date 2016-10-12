@@ -6,19 +6,28 @@
 #include <iostream>
 #include <ros/ros.h>
 #include <geometry_msgs/Pose.h>
+#include <geometry_msgs/PoseStamped.h>
 #include <jsk_recognition_msgs/BoundingBoxArray.h>
+#include <tf/transform_broadcaster.h>
+#include <tf/transform_datatypes.h>
+#include <tf/transform_listener.h>
 
 class TargetObject
 {
 public:
-  TargetObject(geometry_msgs::Pose pose);
+  TargetObject(geometry_msgs::PoseStamped transed_pose,
+               jsk_recognition_msgs::BoundingBox box);
   geometry_msgs::Pose getPose();
-  void addPose(geometry_msgs::Pose new_pose);
+  void addTargetObject(geometry_msgs::PoseStamped transed_pose,
+                       jsk_recognition_msgs::BoundingBox new_box);
   int getCounter();
   void addCounter();
+  jsk_recognition_msgs::BoundingBox getBox();
   ~TargetObject();
 private:
+  jsk_recognition_msgs::BoundingBox box_;
   geometry_msgs::Pose pose_;
+  geometry_msgs::Vector3 dimensions_;
   int counter_;
 };
 
