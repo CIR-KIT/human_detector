@@ -17,4 +17,7 @@
     <param name="box_name" value="/clustering_result" />
     <param name="clustering_frame_id" value="base_link" />
   </node>
+  
+  <node name="target_object_recognizer" pkg="target_object_detector" type="target_object_recognizer_node" output="screen">
+  </node>
 </launch>
