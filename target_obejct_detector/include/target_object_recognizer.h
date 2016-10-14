@@ -7,10 +7,12 @@
 #include <ros/ros.h>
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/PoseStamped.h>
+#include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include <jsk_recognition_msgs/BoundingBoxArray.h>
 #include <tf/transform_broadcaster.h>
 #include <tf/transform_datatypes.h>
 #include <tf/transform_listener.h>
+#include <boost/thread.hpp>
 
 class TargetObject
 {
@@ -37,7 +39,7 @@ public:
   TargetObjectRecognizer(ros::NodeHandle nh);
   ~TargetObjectRecognizer();
   void detectedCallback(const jsk_recognition_msgs::BoundingBoxArray::ConstPtr &detected_objects);
-
+  void robotPoseCallback(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& amcl_pose);
   void run();
 private:
   double calcDistance(geometry_msgs::Pose pose_1, geometry_msgs::Pose pose_2);
@@ -45,8 +47,11 @@ private:
   ros::Rate rate_;
   ros::Publisher recognized_pub_;
   ros::Subscriber detected_sub_;
+  ros::Subscriber robotpose_sub_;
   tf::TransformListener tf_;
+  geometry_msgs::PoseWithCovarianceStamped latest_robot_pose_;
   std::vector<TargetObject> target_object_candidates_;
+  boost::mutex robot_pose_mutex_;
 };
 
 
