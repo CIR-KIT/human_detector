@@ -15,6 +15,14 @@ This is for detecting taget object(human) at Tsukuba Challenge 2016.
 ## Usage
 This package is using 3D pointcloud(pointcloud2) to recognize.
 
+```
+$ roslaunch target_object_detector target_object_detector.launch
+```
+
+- tf(/map, /base_link and sensor_frame)
+- /amcl_pose (geometry_msgs/PoseWithCovarianceStamped)
+- /hokuyo3d/hokuyo_cloud2
+
 ### Train
 First, make `dataset/traian` directory in this pkg. Then move there.
 ```bash
