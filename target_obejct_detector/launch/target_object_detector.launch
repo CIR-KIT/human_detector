@@ -1,5 +1,5 @@
 <launch>
-  <node name="target_object_detector" pkg="target_object_detector" type="target_object_detector_node" output="screen">
+  <node name="target_object_detector" pkg="target_object_detector" type="target_object_detector_node">
     <param name="loop_rate" value="5" />
     <!-- クラスタリングのしきい値 -->
     <param name="clusterTolerance" value="0.3" />
