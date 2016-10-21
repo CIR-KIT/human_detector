@@ -71,3 +71,14 @@ target_link_libraries(train_data_create_tool
   ${OpenCV_LIBRARIES}
   ${PCL_LIBRARIES}
 )
+
+add_executable(
+  target_object_recognizer_node
+  src/target_object_recognizer.cpp
+  src/target_object_recognizer_node.cpp
+  )
+
+target_link_libraries(target_object_recognizer_node
+  ${catkin_LIBRARIES}
+  ${OpenCV_LIBRARIES}
+)
