@@ -1,0 +1,6 @@
+class FakeTargetDetector
+{
+public:
+  FakeTargetDetector();
+  
+};
