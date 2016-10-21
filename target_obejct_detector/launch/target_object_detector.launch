@@ -1,5 +1,5 @@
 <launch>
-  <node name="target_object_detector" pkg="target_object_detector" type="target_object_detector_node" output="screen">
+  <node name="target_object_detector" pkg="target_object_detector" type="target_object_detector_node">
     <param name="loop_rate" value="5" />
     <!-- クラスタリングのしきい値 -->
     <param name="clusterTolerance" value="0.3" />
@@ -16,5 +16,8 @@
     <param name="source_pc_topic_name" value="/hokuyo3d/hokuyo_cloud2" />
     <param name="box_name" value="/clustering_result" />
     <param name="clustering_frame_id" value="base_link" />
+  </node>
+  
+  <node name="target_object_recognizer" pkg="target_object_detector" type="target_object_recognizer_node" output="screen">
   </node>
 </launch>

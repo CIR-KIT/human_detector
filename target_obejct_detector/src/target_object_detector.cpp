@@ -60,21 +60,21 @@ void EuclideanCluster::EuclideanCallback(
   // pcl::removeNaNFromPointCloud(*pcl_source_ptr, *pcl_source_ptr, dummy);
 
   // Create the filtering object
-  pcl::StatisticalOutlierRemoval<pcl::PointXYZI> sor;
-  sor.setInputCloud (pcl_source_ptr);
-  sor.setMeanK (100);
-  sor.setStddevMulThresh (0.1);
-  sor.filter (*pcl_source_ptr);
+  // pcl::StatisticalOutlierRemoval<pcl::PointXYZI> sor;
+  // sor.setInputCloud (pcl_source_ptr);
+  // sor.setMeanK (100);
+  // sor.setStddevMulThresh (0.1);
+  // sor.filter (*pcl_source_ptr);
 
   // 平面をしきい値で除去する→Cropboxで
   CropBox(pcl_source_ptr, crop_min_, crop_max_);
 
   // 処理後の点群をpublish
-  sensor_msgs::PointCloud2 filtered_pc2;
-  pcl::toROSMsg(*pcl_source_ptr, filtered_pc2);
-  filtered_pc2.header.stamp = ros::Time::now();
-  filtered_pc2.header.frame_id = "base_link";
-  fileterd_cloud_pub_.publish(filtered_pc2);
+  // sensor_msgs::PointCloud2 filtered_pc2;
+  // pcl::toROSMsg(*pcl_source_ptr, filtered_pc2);
+  // filtered_pc2.header.stamp = ros::Time::now();
+  // filtered_pc2.header.frame_id = "base_link";
+  // fileterd_cloud_pub_.publish(filtered_pc2);
 
   // Creating the KdTree object for the search method of the extraction
   Clustering(pcl_source_ptr);
