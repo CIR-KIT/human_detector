@@ -8,24 +8,25 @@ Robot model taken from http://wiki.ros.org/pr2_mechanism/Tutorials/SImple%20URDF
   <xacro:property name="deg_to_rad" value="0.01745329251994329577"/>
 
   <!-- Constants for robot dimensions -->
-  <xacro:property name="length" value="0.5" /> 
-  <xacro:property name="width" value="0.3" /> 
+  <xacro:property name="length" value="0.4" /> 
+  <xacro:property name="width" value="0.4" /> 
   <xacro:property name="wheel_radius" value="0.11" /> <!-- Link 1 -->
   <xacro:property name="thickness" value="0.086" /> <!-- Link 2 -->
   <xacro:property name="axel_offset" value="0.05" /> <!-- Space btw top of beam and the each joint -->
   <xacro:property name="steer_offset" value="0.02" /> <!-- Link 1 -->
+  <xacro:property name="steer_height" value="0.4" />
 
   <!-- Links: inertial,visual,collision -->
   <link name="base_link">
     <inertial>
       <!-- origin is relative -->
-      <origin xyz="0 0 0.4" rpy="0 0 0"/>
+      <origin xyz="0 0 0.2" rpy="0 0 0"/>
       <mass value="5"/>
       <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
     </inertial>
     <visual>
       <geometry>
-        <box size="${length} ${width} 0.1"/>
+        <box size="${length} ${width} 0.05"/>
       </geometry>
     </visual>
     <collision>
@@ -60,24 +61,40 @@ Robot model taken from http://wiki.ros.org/pr2_mechanism/Tutorials/SImple%20URDF
 
   <!-- Wheels -->
   <front_wheel name="front_right" parent="base" radius="${wheel_radius}" thickness="${thickness}" 
-      length="${length}" width="${width}" axel_offset="${axel_offset}" right_left="1" steer_height="${wheel_radius+steer_offset}">
-    <origin xyz="${length/2-axel_offset} ${width/2+axel_offset} 0" rpy="${-90 * deg_to_rad} 0 0"/>
+      length="${length}" width="${width}" axel_offset="${axel_offset}" right_left="1" steer_height="${steer_height}">
   </front_wheel>
   <front_wheel name="front_left" parent="base" radius="${wheel_radius}" thickness="${thickness}" 
-      length="${length}" width="${width}" axel_offset="${axel_offset}" right_left="-1" steer_height="${wheel_radius+steer_offset}">
-    <origin xyz="${length/2-axel_offset} ${-width/2-axel_offset} 0" rpy="${-90 * deg_to_rad} 0 0"/>
+      length="${length}" width="${width}" axel_offset="${axel_offset}" right_left="-1" steer_height="${steer_height}">
   </front_wheel>
+  <rear_wheel name="rear_right" parent="base" radius="${wheel_radius}" thickness="${thickness}" 
+      length="${length}" width="${width}" axel_offset="${axel_offset}" right_left="1" steer_height="${steer_height}">
+  </rear_wheel>
+  <rear_wheel name="rear_left" parent="base" radius="${wheel_radius}" thickness="${thickness}" 
+      length="${length}" width="${width}" axel_offset="${axel_offset}" right_left="-1" steer_height="${steer_height}">
+  </rear_wheel>
+  <!--
+  <front_wheel name="rear_right" parent="base" radius="${wheel_radius}" thickness="${thickness}" 
+      length="${length}" width="${width}" axel_offset="${axel_offset}" right_left="1" steer_height="${wheel_radius+steer_offset}">
+    <origin xyz="${-(length/2-axel_offset)} ${width/2+axel_offset} 0" rpy="${-90 * deg_to_rad} 0 0"/>
+  </front_wheel>
+  <front_wheel name="rear_left" parent="base" radius="${wheel_radius}" thickness="${thickness}" 
+      length="${length}" width="${width}" axel_offset="${axel_offset}" right_left="-1" steer_height="${wheel_radius+steer_offset}">
+    <origin xyz="${-(length/2-axel_offset)} ${-width/2-axel_offset} 0" rpy="${-90 * deg_to_rad} 0 0"/>
+  </front_wheel>
+  -->
+  <!--
   <rear_wheel name="rear_right" parent="base" radius="${wheel_radius}" thickness="${thickness}">
     <origin xyz="${-length/2+axel_offset} ${width/2+axel_offset} 0" rpy="${-90 * deg_to_rad} 0 0"/>
   </rear_wheel>
   <rear_wheel name="rear_left" parent="base" radius="${wheel_radius}" thickness="${thickness}">
     <origin xyz="${-length/2+axel_offset} ${-width/2-axel_offset} 0" rpy="${-90 * deg_to_rad} 0 0"/>
   </rear_wheel>
+  -->
 
 
   <!-- Colour -->
   <gazebo reference="base_link">
-    <material>Gazebo/Green</material>
+    <material>Gazebo/WoodFloor</material>
   </gazebo>
 
   <gazebo reference="base_footprint">
