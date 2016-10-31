@@ -8,6 +8,7 @@ Robot model taken from http://wiki.ros.org/pr2_mechanism/Tutorials/SImple%20URDF
   <xacro:property name="deg_to_rad" value="0.01745329251994329577"/>
 
   <!-- Constants for robot dimensions -->
+  <xacro:property name="human_back_length" value="0.5" /> 
   <xacro:property name="length" value="0.4" /> 
   <xacro:property name="width" value="0.4" /> 
   <xacro:property name="wheel_radius" value="0.11" /> <!-- Link 1 -->
@@ -70,7 +71,7 @@ Robot model taken from http://wiki.ros.org/pr2_mechanism/Tutorials/SImple%20URDF
     </inertial>
     <visual>
       <geometry>
-        <box size="${length} ${width} 0.04"/>
+        <box size="${human_back_length} ${width} 0.04"/>
       </geometry>
     </visual>
     <collision>
@@ -185,19 +186,19 @@ Robot model taken from http://wiki.ros.org/pr2_mechanism/Tutorials/SImple%20URDF
     </inertial>
     <visual>
       <geometry>
-        <box size="${length} 0.25 0.1"/>
+        <box size="${human_back_length} 0.25 0.1"/>
       </geometry>
     </visual>
     <collision>
       <!-- origin is relative -->
       <origin xyz="0 0 0"/>
       <geometry>
-        <box size="${length} 0.25 0.1"/>
+        <box size="${human_back_length} 0.25 0.1"/>
       </geometry>
     </collision>
   </link>
   <joint name="base_body_joint" type="fixed">
-      <origin xyz="-0.0 0 ${length/2.0}" rpy="0 ${-90 * deg_to_rad} 0"/>
+      <origin xyz="-0.0 0 ${human_back_length/2.0}" rpy="0 ${-90 * deg_to_rad} 0"/>
     <child link="body_link"/>
     <parent link="base_link"/>
   </joint>
@@ -211,14 +212,14 @@ Robot model taken from http://wiki.ros.org/pr2_mechanism/Tutorials/SImple%20URDF
     </inertial>
     <visual>
       <geometry>
-        <cylinder radius="0.05" length="${length}"/>
+        <cylinder radius="0.05" length="${human_back_length}"/>
       </geometry>
     </visual>
     <collision>
       <!-- origin is relative -->
       <origin xyz="0 0 0"/>
       <geometry>
-        <cylinder radius="0.05" length="${length}"/>
+        <cylinder radius="0.05" length="${human_back_length}"/>
       </geometry>
     </collision>
   </link>
@@ -238,14 +239,14 @@ Robot model taken from http://wiki.ros.org/pr2_mechanism/Tutorials/SImple%20URDF
     </inertial>
     <visual>
       <geometry>
-        <cylinder radius="0.05" length="${length}"/>
+        <cylinder radius="0.05" length="${human_back_length}"/>
       </geometry>
     </visual>
     <collision>
       <!-- origin is relative -->
       <origin xyz="0 0 0"/>
       <geometry>
-        <cylinder radius="0.05" length="${length}"/>
+        <cylinder radius="0.05" length="${human_back_length}"/>
       </geometry>
     </collision>
   </link>
@@ -276,7 +277,7 @@ Robot model taken from http://wiki.ros.org/pr2_mechanism/Tutorials/SImple%20URDF
     </collision>
   </link>
   <joint name="bodyright_legright1_joint" type="fixed">
-      <origin xyz="-0.2 0 0.125" rpy="0 ${-90 * deg_to_rad} 0"/>
+      <origin xyz="-0.2 0 ${human_back_length/2-0.075}" rpy="0 ${-90 * deg_to_rad} 0"/>
     <child link="legright1_link"/>
     <parent link="bodyright_link"/>
   </joint>
@@ -302,7 +303,7 @@ Robot model taken from http://wiki.ros.org/pr2_mechanism/Tutorials/SImple%20URDF
     </collision>
   </link>
   <joint name="bodyleft_legleft1__joint" type="fixed">
-      <origin xyz="-0.2 0 0.125" rpy="0 ${-90 * deg_to_rad} 0"/>
+      <origin xyz="-0.2 0 ${human_back_length/2-0.075}" rpy="0 ${-90 * deg_to_rad} 0"/>
     <child link="legleft1_link"/>
     <parent link="bodyleft_link"/>
   </joint>
@@ -410,6 +411,60 @@ Robot model taken from http://wiki.ros.org/pr2_mechanism/Tutorials/SImple%20URDF
     <child link="legright3_link"/>
     <parent link="legright2_link"/>
   </joint>
+
+  <link name="footleft_link">
+    <inertial>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <box size="0.2 0.1 0.08"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <box size="0.2 0.1 0.05"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="legleft3_footleft_joint" type="fixed">
+      <origin xyz="0.05 0 -${0.45*0.5}" rpy="0 0 0"/>
+    <child link="footleft_link"/>
+    <parent link="legleft3_link"/>
+  </joint>
+
+  <link name="footright_link">
+    <inertial>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <box size="0.2 0.1 0.08"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <box size="0.2 0.1 0.05"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="legrihgt3_footrihgt_joint" type="fixed">
+      <origin xyz="0.05 0 -${0.45*0.5}" rpy="0 0 0"/>
+    <child link="footright_link"/>
+    <parent link="legright3_link"/>
+  </joint>
+
+  <!-- Arm -->
 
   <!-- Colour -->
   <gazebo reference="base_link">
