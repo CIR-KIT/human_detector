@@ -26,7 +26,7 @@ Robot model taken from http://wiki.ros.org/pr2_mechanism/Tutorials/SImple%20URDF
     </inertial>
     <visual>
       <geometry>
-        <box size="${length} ${width} 0.05"/>
+        <box size="${length} ${width} 0.04"/>
       </geometry>
     </visual>
     <collision>
@@ -58,6 +58,33 @@ Robot model taken from http://wiki.ros.org/pr2_mechanism/Tutorials/SImple%20URDF
     <parent link="base_footprint"/>
   </joint>
 
+  <!-- Links: inertial,visual,collision -->
+  <link name="back_link">
+    <inertial>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <box size="${length} ${width} 0.04"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <box size="${length} ${width} 0.1"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="base_back_joint" type="fixed">
+      <origin xyz="${-length/2.0+0.02} 0 ${length/2.0}" rpy="0 ${-90 * deg_to_rad} 0"/>
+    <child link="back_link"/>
+    <parent link="base_link"/>
+  </joint>
 
   <!-- Wheels -->
   <front_wheel name="front_right" parent="base" radius="${wheel_radius}" thickness="${thickness}" 
@@ -94,6 +121,10 @@ Robot model taken from http://wiki.ros.org/pr2_mechanism/Tutorials/SImple%20URDF
 
   <!-- Colour -->
   <gazebo reference="base_link">
+    <material>Gazebo/WoodFloor</material>
+  </gazebo>
+
+  <gazebo reference="back_link">
     <material>Gazebo/WoodFloor</material>
   </gazebo>
 
