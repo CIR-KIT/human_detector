@@ -46,7 +46,7 @@ wstool merge -t src src/TC2016_for_thirdrobot/third_robot.rosinstall
 ### 自律移動の流れ
 ゼロの状態から自律移動を行うまでの流れを説明します。
 
-1. 地図の作成
+1. 地図の作成  
 環境中をロボットを走らせながら`gmapping`等を使って地図を作ります。リアルタイムに作ってもいいし、`rosbag`で保存してからやってもいいです。個人的にはパラメータを変えながら試せるので`rosbag`に記録してからのほうがいいと思います。以下`rosbag`に記録してから行うことを想定します。地図作成以外にも使うので`rosbag record -a`で全部保存しましょう。`rosbag`から地図を作る場合には`gmapping`の場合、  
 ```bash
 rosrun gmapping slam_gmapping_replay --scan_topic=/scan_multi --bag_filename=2016-10-19-15-49-19.bag  _particles:=50 _delta:=0.1 _iterations:=30 _str:=15.5 _stt:=15.5 _linearUpdate:=0.3 _angularUpdata:=0.1
@@ -58,7 +58,7 @@ rosrun map_server map_saver -f filename
 ```
 カレントディレクトリに`-f`オプションで指定した名前の地図が出来ます。`pgm`ファイルが実態ですが、地図の情報が含まれている`yaml`ファイルも重要です。地図の名前を変更したいときはファイル名自体を変更することに加えて、`yaml`ファイル内の画像ファイルの名前も変更しないといけません。  
 
-2. Waypointの作成
+2. Waypointの作成  
 今回は`ros_waypoint_generator`を使います。`catkin workspace`にクローンしましょう。ちゃんと`wstool`でやればすでにあるかもしれません。
 ```bash
 git clone https://github.com/AriYu/ros_waypoint_generator.git
@@ -100,7 +100,7 @@ rosrun ros_waypoin_generator ros_waypoint_generator --load waypoints.csv
 
 ここまで準備は終わりです。  
 
-3. Navigation
+3. Navigation  
 2.で作ったwaypointファイルを`waypoint_navigator/waypoints`にコピーしておきましょう。本当はどこでもいいです。`waypoint_navigator/launch/waypoint_nagigator.launch`の`waypointsfile`をさっき作ったやつに書き換えます。  
 
 実際にナビゲーションしましょう。実機なら
@@ -114,12 +114,12 @@ roslaunch waypoint_navigator waypoint_navigator.launch
 ```
 ロボットが自律移動を始めます。  
 
-4. 探索対象をみつける
-実機の場合：  
+4. 探索対象をみつける  
+- 実機の場合：  
 ```
 roslaunch target_object_detector target_object_detector.launch
 ```
-実際に実験出来ない時：  
+- 実際に実験出来ない時：  
 `fake_target_detector`を使って探索対象が見つかったことにできます。  
 まず、どこに探索対象がいることにするかを決めます。地図を`rviz`で表示しながら探索対象が居る場所に`Publish point`を使ってクリックします。
 ```bash
