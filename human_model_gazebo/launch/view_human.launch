@@ -1,0 +1,15 @@
+<launch>
+  <!-- start world -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch"/>
+
+  <!-- load robot -->
+  <param name="robot_description"
+      command="$(find xacro)/xacro.py '$(find human_model_gazebo)/urdf/human.xacro'" />
+
+  <!-- Load controller config -->
+  <!--rosparam command="load" file="$(find steer_drive_controller)/test/common/config/steerbot_controllers.yaml" /-->
+
+  <!-- push robot_description to factory and spawn robot in gazebo -->
+  <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+	args="-urdf -model steerbot -param robot_description -z 1.8"/>
+</launch>
