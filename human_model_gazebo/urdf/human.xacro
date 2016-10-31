@@ -41,13 +41,12 @@ Robot model taken from http://wiki.ros.org/pr2_mechanism/Tutorials/SImple%20URDF
     </collision>
   </link>
 
-
   <link name="base_footprint">
-    <visual>
+    <!--visual>
       <geometry>
         <sphere radius="0.01"/>
       </geometry>
-    </visual>
+    </visual-->
     <collision>
       <origin xyz="0 0 0"/>
       <geometry>
@@ -464,7 +463,85 @@ Robot model taken from http://wiki.ros.org/pr2_mechanism/Tutorials/SImple%20URDF
     <parent link="legright3_link"/>
   </joint>
 
+  <!-- Chest -->
+  <link name="chest_link">
+    <inertial>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder radius="0.05" length="0.25"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.05" length="0.25"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="body_chest_joint" type="fixed">
+      <origin xyz="0.25 0 0" rpy="${-90 * deg_to_rad} 0 0"/>
+    <child link="chest_link"/>
+    <parent link="body_link"/>
+  </joint>
+
   <!-- Arm -->
+  <link name="shoulderleft_link">
+    <inertial>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <sphere radius="0.05"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <sphere radius="0.05"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="bodyleft_shoulderleft_joint" type="fixed">
+      <origin xyz="0 0 -0.25" rpy="0 0 0"/>
+    <child link="shoulderleft_link"/>
+    <parent link="bodyleft_link"/>
+  </joint>
+
+  <link name="shoulderright_link">
+    <inertial>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <sphere radius="0.05"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <sphere radius="0.05"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="bodyright_shoulderright_joint" type="fixed">
+      <origin xyz="0 0 -0.25" rpy="0 0 0"/>
+    <child link="shoulderright_link"/>
+    <parent link="bodyright_link"/>
+  </joint>
 
   <!-- Colour -->
   <gazebo reference="base_link">
