@@ -254,11 +254,10 @@ Robot model taken from http://wiki.ros.org/pr2_mechanism/Tutorials/SImple%20URDF
     <child link="bodyleft_link"/>
     <parent link="body_link"/>
   </joint>
-
-  <link name="legright1_link">
+0  <link name="legright1_link">
     <inertial>
       <!-- origin is relative -->
-      <origin xyz="0 0 0" rpy="0 0 0"/>
+0gin xyz="0 0 0" rpy="0 0 0"/>
       <mass value="5"/>
       <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
     </inertial>
@@ -301,7 +300,7 @@ Robot model taken from http://wiki.ros.org/pr2_mechanism/Tutorials/SImple%20URDF
       </geometry>
     </collision>
   </link>
-  <joint name="bodyleft_legleft1__joint" type="fixed">
+  <joint name="bodyleft_legleft1_joint" type="fixed">
       <origin xyz="-0.2 0 ${human_back_length/2-0.075}" rpy="0 ${-90 * deg_to_rad} 0"/>
     <child link="legleft1_link"/>
     <parent link="bodyleft_link"/>
@@ -327,7 +326,7 @@ Robot model taken from http://wiki.ros.org/pr2_mechanism/Tutorials/SImple%20URDF
       </geometry>
     </collision>
   </link>
-  <joint name="legright1_legright2__joint" type="fixed">
+  <joint name="legright1_legright2_joint" type="fixed">
       <origin xyz="0 0 0.125" rpy="0 0 0"/>
     <child link="legright2_link"/>
     <parent link="legright1_link"/>
@@ -353,7 +352,7 @@ Robot model taken from http://wiki.ros.org/pr2_mechanism/Tutorials/SImple%20URDF
       </geometry>
     </collision>
   </link>
-  <joint name="legleft1_legleft2__joint" type="fixed">
+  <joint name="legleft1_legleft2_joint" type="fixed">
       <origin xyz="0 0 0.125" rpy="0 0 0"/>
     <child link="legleft2_link"/>
     <parent link="legleft1_link"/>
@@ -379,7 +378,7 @@ Robot model taken from http://wiki.ros.org/pr2_mechanism/Tutorials/SImple%20URDF
       </geometry>
     </collision>
   </link>
-  <joint name="legleft2_legleft3__joint" type="fixed">
+  <joint name="legleft2_legleft3_joint" type="fixed">
       <origin xyz="0.225 0 0" rpy="0 ${-90 * deg_to_rad} 0"/>
     <child link="legleft3_link"/>
     <parent link="legleft2_link"/>
@@ -405,7 +404,7 @@ Robot model taken from http://wiki.ros.org/pr2_mechanism/Tutorials/SImple%20URDF
       </geometry>
     </collision>
   </link>
-  <joint name="legright2_legright3__joint" type="fixed">
+  <joint name="legright2_legright3_joint" type="fixed">
       <origin xyz="0.225 0 0" rpy="0 ${-90 * deg_to_rad} 0"/>
     <child link="legright3_link"/>
     <parent link="legright2_link"/>
@@ -490,6 +489,33 @@ Robot model taken from http://wiki.ros.org/pr2_mechanism/Tutorials/SImple%20URDF
     <parent link="body_link"/>
   </joint>
 
+  <!-- Head -->
+  <link name="head_link">
+    <inertial>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <sphere radius="0.125"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <sphere radius="0.125"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="chest_head_joint" type="fixed">
+      <origin xyz="0.15 0 0" rpy="0 0 0"/>
+    <child link="head_link"/>
+    <parent link="chest_link"/>
+  </joint>
+
   <!-- Arm -->
   <link name="shoulderleft_link">
     <inertial>
@@ -542,6 +568,215 @@ Robot model taken from http://wiki.ros.org/pr2_mechanism/Tutorials/SImple%20URDF
     <child link="shoulderright_link"/>
     <parent link="bodyright_link"/>
   </joint>
+
+  <link name="armright1_link">
+    <inertial>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder radius="0.05" length="0.25"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.05" length="0.25"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="shoulderright_armright1_joint" type="fixed">
+      <origin xyz="-0.065 0 0.11" rpy="0 ${-30 * deg_to_rad} 0"/>
+    <child link="armright1_link"/>
+    <parent link="shoulderright_link"/>
+  </joint>
+
+  <link name="armleft1_link">
+    <inertial>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder radius="0.05" length="0.25"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.05" length="0.25"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="shoulderleft_armleft1_joint" type="fixed">
+      <origin xyz="-0.065 0 0.11" rpy="0 ${-30 * deg_to_rad} 0"/>
+    <child link="armleft1_link"/>
+    <parent link="shoulderleft_link"/>
+  </joint>
+
+  <link name="armright2_link">
+    <inertial>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <sphere radius="0.05"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <sphere radius="0.05"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="armright1_armright2_joint" type="fixed">
+      <origin xyz="0 0 0.125" rpy="0 0 0"/>
+    <child link="armright2_link"/>
+    <parent link="armright1_link"/>
+  </joint>
+
+  <link name="armleft2_link">
+    <inertial>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <sphere radius="0.05"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <sphere radius="0.05"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="armleft1_armleft2_joint" type="fixed">
+      <origin xyz="0 0 0.125" rpy="0 0 0"/>
+    <child link="armleft2_link"/>
+    <parent link="armleft1_link"/>
+  </joint>
+
+  <link name="armleft3_link">
+    <inertial>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder radius="0.05" length="0.2"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.05" length="0.2"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="armleft2_armleft3_joint" type="fixed">
+      <origin xyz="-0.065 0 0.11" rpy="0 ${-30 * deg_to_rad} 0"/>
+    <child link="armleft3_link"/>
+    <parent link="armleft2_link"/>
+  </joint>
+
+  <link name="armright3_link">
+    <inertial>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder radius="0.05" length="0.2"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.05" length="0.2"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="armright2_armright3_joint" type="fixed">
+      <origin xyz="-0.065 0 0.11" rpy="0 ${-30 * deg_to_rad} 0"/>
+    <child link="armright3_link"/>
+    <parent link="armright2_link"/>
+  </joint>
+
+  <link name="handright_link">
+    <inertial>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <sphere radius="0.065"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <sphere radius="0.065"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="armrighht3_handright_joint" type="fixed">
+      <origin xyz="0 0 ${0.2*0.5}" rpy="0 0 0"/>
+    <child link="handright_link"/>
+    <parent link="armright3_link"/>
+  </joint>
+
+  <link name="handleft_link">
+    <inertial>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <sphere radius="0.065"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <sphere radius="0.065"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="armleft3_handleft_joint" type="fixed">
+      <origin xyz="0 0 ${0.2*0.5}" rpy="0 0 0"/>
+    <child link="handleft_link"/>
+    <parent link="armleft3_link"/>
+  </joint>
+
 
   <!-- Colour -->
   <gazebo reference="base_link">
