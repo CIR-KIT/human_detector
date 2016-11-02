@@ -397,7 +397,7 @@ void EuclideanCluster::read_scaling_parameters(std::string scaling_parameter_fil
   // second line
   if(!getline(ifs, str))
   {
-      ROS_ERROR("failed to read first line on scaling parameter file");
+      ROS_ERROR("failed to read second line on scaling parameter file");
       return;
   }
 
