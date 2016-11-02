@@ -27,15 +27,18 @@ EuclideanCluster::EuclideanCluster(ros::NodeHandle nh, ros::NodeHandle n)
   n.param<float>("crop_y_max", crop_max_.y, 5.5);
   n.param<float>("crop_z_min", crop_min_.z, -0.1);
   n.param<float>("crop_z_max", crop_max_.z, 0.5);
-  n.param<std::string>("svm_modele_path", svm_modele_path_,
+  n.param<std::string>("svm_model_path", svm_model_path_,
                        ros::package::getPath("target_object_detector")
                        + "/model/train.csv.model");
-  if((model_=svm_load_model(svm_modele_path_.c_str()))==0)
+  if((model_=svm_load_model(svm_model_path_.c_str()))==0)
   {
-    fprintf(stderr,"can't open model file %s\n",svm_modele_path_.c_str());
+    fprintf(stderr,"can't open model file %s\n",svm_model_path_.c_str());
     exit(1);
   }
-  read_scaling_parameters("todo");
+  n.param<std::string>("svm_range_path", svm_range_path_,
+                       ros::package::getPath("target_object_detector")
+                       + "/model/train.csv.range");
+  read_scaling_parameters(svm_range_path_);
 }
 
 void EuclideanCluster::EuclideanCallback(
@@ -374,33 +377,54 @@ void EuclideanCluster::normlize_features(svm_node *features)
 //スケーリングバリューは今は直書きしてるけど余裕があれば読み込めるようにする
 void EuclideanCluster::read_scaling_parameters(std::string scaling_parameter_file)
 {
-  feature_lower_ = -1.0;
-  feature_upper_ = 1.0;
-  feature_max_.push_back(1.40893);
-  feature_max_.push_back(0.531125);
-  feature_max_.push_back(0.0988914);
-  feature_max_.push_back(1.20336);
-  feature_max_.push_back(0.10187);
-  feature_max_.push_back(0.0831377);
-  feature_max_.push_back(0.930749);
-  feature_max_.push_back(0.82591);
-  feature_max_.push_back(0.741988);
-  feature_max_.push_back(0.246874);
-  feature_max_.push_back(0.999884);
-  feature_max_.push_back(0.891591);
-  feature_max_.push_back(0.296347);
+  scaling_parameter_file = "/home/morita/Documents/dev/ros/tc2016_ws/src/TC2016_for_thirdrobot/target_obejct_detector/model/train.csv.range";
 
-  feature_min_.push_back(0.00109534);
-  feature_min_.push_back(-0.301029);
-  feature_min_.push_back(-0.105092);
-  feature_min_.push_back(0.00130988);
-  feature_min_.push_back(-0.0665549);
-  feature_min_.push_back(4.28304e-05);
-  feature_min_.push_back(0.0427169);
-  feature_min_.push_back(0.0110803);
-  feature_min_.push_back(0.000115789);
-  feature_min_.push_back(0.00232679);
-  feature_min_.push_back(0.258012);
-  feature_min_.push_back(-0.0749601);
-  feature_min_.push_back(8.93961e-05);
+  std::ifstream ifs(scaling_parameter_file.c_str());
+  std::string str;
+  if (ifs.fail())
+  {
+      ROS_ERROR("failed to read scaling parameter file");
+      return;
+  }
+
+  // first line
+  if(!getline(ifs, str))
+  {
+      ROS_ERROR("failed to read first line on scaling parameter file");
+      return;
+  }
+
+  // second line
+  if(!getline(ifs, str))
+  {
+      ROS_ERROR("failed to read second line on scaling parameter file");
+      return;
+  }
+
+  std::vector<std::string> splited = split(str, ' ');
+
+  feature_lower_ = atof(splited[0].c_str());
+  feature_upper_ = atof(splited[1].c_str());
+
+  // after second line
+  while(getline(ifs, str))
+  {
+    std::vector<std::string> splited = split(str, ' ');
+
+    feature_min_.push_back(atof(splited[1].c_str()));
+    feature_max_.push_back(atof(splited[2].c_str()));
+  }
+}
+
+std::vector<std::string> EuclideanCluster::split(const std::string &s, char delim)
+{
+    std::vector<std::string> elems;
+    std::stringstream ss(s);
+    std::string item;
+    while (getline(ss, item, delim)) {
+    if (!item.empty()) {
+            elems.push_back(item);
+        }
+    }
+    return elems;
 }

@@ -56,6 +56,7 @@ public:
                            svm_node *features);
   jsk_recognition_msgs::BoundingBox MinAreaRect(pcl::PointCloud<pcl::PointXYZI>::Ptr cloud, int cluster_cnt);
   void run();
+  std::vector<std::string> split(const std::string &s, char delim);
 
 private:
   ros::NodeHandle nh_;
@@ -74,7 +75,8 @@ private:
 
   pcl::PointXYZ crop_min_, crop_max_;
 
-  std::string svm_modele_path_;
+  std::string svm_model_path_;
+  std::string svm_range_path_;
   svm_model *model_;
   std::vector<float> feature_max_;
   std::vector<float> feature_min_;
