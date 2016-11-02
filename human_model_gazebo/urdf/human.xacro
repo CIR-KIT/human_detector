@@ -1,0 +1,805 @@
+<?xml version="1.0"?>
+<robot name="robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+<!--
+Robot model taken from http://wiki.ros.org/pr2_mechanism/Tutorials/SImple%20URDF-Controller%20Example
+-->
+  <xacro:include filename="$(find human_model_gazebo)/urdf/wheel.xacro"/>
+
+  <xacro:property name="deg_to_rad" value="0.01745329251994329577"/>
+
+  <!-- Constants for robot dimensions -->
+  <xacro:property name="human_back_length" value="0.5" /> 
+  <xacro:property name="length" value="0.4" /> 
+  <xacro:property name="width" value="0.4" /> 
+  <xacro:property name="wheel_radius" value="0.11" /> <!-- Link 1 -->
+  <xacro:property name="thickness" value="0.086" /> <!-- Link 2 -->
+  <xacro:property name="axel_offset" value="0.05" /> <!-- Space btw top of beam and the each joint -->
+  <xacro:property name="steer_offset" value="0.02" /> <!-- Link 1 -->
+  <xacro:property name="steer_height" value="0.4" />
+  <xacro:property name="board_length" value="0.8" />
+  <xacro:property name="board_width" value="0.3" /> 
+
+  <!-- Links: inertial,visual,collision -->
+  <link name="base_link">
+    <inertial>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0.2" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <box size="${length} ${width} 0.04"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <box size="${length} ${width} 0.04"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="base_footprint">
+    <!--visual>
+      <geometry>
+        <sphere radius="0.01"/>
+      </geometry>
+    </visual-->
+    <collision>
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <sphere radius="0.00000001"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="base_footprint_joint" type="fixed">
+    <origin xyz="0 0 ${wheel_radius}" rpy="0 0 0"/>
+    <child link="base_link"/>
+    <parent link="base_footprint"/>
+  </joint>
+
+  <!-- Links: inertial,visual,collision -->
+  <link name="back_link">
+    <inertial>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <box size="${human_back_length} ${width} 0.04"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <box size="${length} ${width} 0.04"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="base_back_joint" type="fixed">
+      <origin xyz="${-length/2.0 + 0.02} 0 ${length/2.0}" rpy="0 ${-90 * deg_to_rad} 0"/>
+    <child link="back_link"/>
+    <parent link="base_link"/>
+  </joint>
+
+  <!-- Links: inertial,visual,collision -->
+  <link name="panelfront_link">
+    <inertial>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <box size="${board_length} ${board_width} 0.02"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <box size="${board_length} ${board_width} 0.02"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="base_panelfront_joint" type="fixed">
+      <origin xyz="0.08 0.45 -0.005" rpy="0 ${80 * deg_to_rad} 0"/>
+    <child link="panelfront_link"/>
+    <parent link="base_link"/>
+  </joint>
+
+  <!-- Links: inertial,visual,collision -->
+  <link name="panelback_link">
+    <inertial>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <box size="${board_length} ${board_width} 0.02"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <box size="${board_length} ${board_width} 0.02"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="base_panelback_joint" type="fixed">
+     <origin xyz="-0.08 0.45 -0.005" rpy="0 ${-80 * deg_to_rad} 0"/>
+    <child link="panelback_link"/>
+    <parent link="base_link"/>
+  </joint>
+
+  <!-- Wheels -->
+  <front_wheel name="front_right" parent="base" radius="${wheel_radius}" thickness="${thickness}" 
+      length="${length}" width="${width}" axel_offset="${axel_offset}" right_left="1" steer_height="${steer_height}">
+  </front_wheel>
+  <front_wheel name="front_left" parent="base" radius="${wheel_radius}" thickness="${thickness}" 
+      length="${length}" width="${width}" axel_offset="${axel_offset}" right_left="-1" steer_height="${steer_height}">
+  </front_wheel>
+  <rear_wheel name="rear_right" parent="base" radius="${wheel_radius}" thickness="${thickness}" 
+      length="${length}" width="${width}" axel_offset="${axel_offset}" right_left="1" steer_height="${steer_height}">
+  </rear_wheel>
+  <rear_wheel name="rear_left" parent="base" radius="${wheel_radius}" thickness="${thickness}" 
+      length="${length}" width="${width}" axel_offset="${axel_offset}" right_left="-1" steer_height="${steer_height}">
+  </rear_wheel>
+  <!--
+  <front_wheel name="rear_right" parent="base" radius="${wheel_radius}" thickness="${thickness}" 
+      length="${length}" width="${width}" axel_offset="${axel_offset}" right_left="1" steer_height="${wheel_radius+steer_offset}">
+    <origin xyz="${-(length/2-axel_offset)} ${width/2+axel_offset} 0" rpy="${-90 * deg_to_rad} 0 0"/>
+  </front_wheel>
+  <front_wheel name="rear_left" parent="base" radius="${wheel_radius}" thickness="${thickness}" 
+      length="${length}" width="${width}" axel_offset="${axel_offset}" right_left="-1" steer_height="${wheel_radius+steer_offset}">
+    <origin xyz="${-(length/2-axel_offset)} ${-width/2-axel_offset} 0" rpy="${-90 * deg_to_rad} 0 0"/>
+  </front_wheel>
+  -->
+  <!--
+  <rear_wheel name="rear_right" parent="base" radius="${wheel_radius}" thickness="${thickness}">
+    <origin xyz="${-length/2+axel_offset} ${width/2+axel_offset} 0" rpy="${-90 * deg_to_rad} 0 0"/>
+  </rear_wheel>
+  <rear_wheel name="rear_left" parent="base" radius="${wheel_radius}" thickness="${thickness}">
+    <origin xyz="${-length/2+axel_offset} ${-width/2-axel_offset} 0" rpy="${-90 * deg_to_rad} 0 0"/>
+  </rear_wheel>
+  -->
+
+  <!-- Links: inertial,visual,collision -->
+  <link name="body_link">
+    <inertial>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <box size="${human_back_length} 0.25 0.1"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <box size="${human_back_length} 0.25 0.1"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="base_body_joint" type="fixed">
+      <origin xyz="-0.0 0 ${human_back_length/2.0}" rpy="0 ${-90 * deg_to_rad} 0"/>
+    <child link="body_link"/>
+    <parent link="base_link"/>
+  </joint>
+
+  <link name="bodyright_link">
+    <inertial>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder radius="0.05" length="${human_back_length}"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.05" length="${human_back_length}"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="body_bodyright_joint" type="fixed">
+      <origin xyz="0.0 -0.125 0" rpy="0 ${-90 * deg_to_rad} 0"/>
+    <child link="bodyright_link"/>
+    <parent link="body_link"/>
+  </joint>
+
+  <!-- left leg -->
+  <link name="bodyleft_link">
+    <inertial>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder radius="0.05" length="${human_back_length}"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.05" length="${human_back_length}"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="body_bodyleft_joint" type="fixed">
+      <origin xyz="0.0 0.125 0" rpy="0 ${-90 * deg_to_rad} 0"/>
+    <child link="bodyleft_link"/>
+    <parent link="body_link"/>
+  </joint>
+0  <link name="legright1_link">
+    <inertial>
+      <!-- origin is relative -->
+0gin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder radius="0.05" length="0.25"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+       <cylinder radius="0.05" length="0.25"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="bodyright_legright1_joint" type="fixed">
+      <origin xyz="-0.2 0 ${human_back_length/2-0.075}" rpy="0 ${-90 * deg_to_rad} 0"/>
+    <child link="legright1_link"/>
+    <parent link="bodyright_link"/>
+  </joint>
+
+  <link name="legleft1_link">
+    <inertial>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder radius="0.05" length="0.25"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.05" length="0.25"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="bodyleft_legleft1_joint" type="fixed">
+      <origin xyz="-0.2 0 ${human_back_length/2-0.075}" rpy="0 ${-90 * deg_to_rad} 0"/>
+    <child link="legleft1_link"/>
+    <parent link="bodyleft_link"/>
+  </joint>
+
+  <link name="legright2_link">
+    <inertial>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <sphere radius="0.05"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <sphere radius="0.05"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="legright1_legright2_joint" type="fixed">
+      <origin xyz="0 0 0.125" rpy="0 0 0"/>
+    <child link="legright2_link"/>
+    <parent link="legright1_link"/>
+  </joint>
+
+  <link name="legleft2_link">
+    <inertial>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <sphere radius="0.05"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <sphere radius="0.05"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="legleft1_legleft2_joint" type="fixed">
+      <origin xyz="0 0 0.125" rpy="0 0 0"/>
+    <child link="legleft2_link"/>
+    <parent link="legleft1_link"/>
+  </joint>
+
+  <link name="legleft3_link">
+    <inertial>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder radius="0.05" length="0.45"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.05" length="0.45"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="legleft2_legleft3_joint" type="fixed">
+      <origin xyz="0.225 0 0" rpy="0 ${-90 * deg_to_rad} 0"/>
+    <child link="legleft3_link"/>
+    <parent link="legleft2_link"/>
+  </joint>
+
+  <link name="legright3_link">
+    <inertial>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder radius="0.05" length="0.45"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.05" length="0.45"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="legright2_legright3_joint" type="fixed">
+      <origin xyz="0.225 0 0" rpy="0 ${-90 * deg_to_rad} 0"/>
+    <child link="legright3_link"/>
+    <parent link="legright2_link"/>
+  </joint>
+
+  <link name="footleft_link">
+    <inertial>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <box size="0.2 0.1 0.08"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <box size="0.2 0.1 0.05"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="legleft3_footleft_joint" type="fixed">
+      <origin xyz="0.05 0 -${0.45*0.5}" rpy="0 0 0"/>
+    <child link="footleft_link"/>
+    <parent link="legleft3_link"/>
+  </joint>
+
+  <link name="footright_link">
+    <inertial>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <box size="0.2 0.1 0.08"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <box size="0.2 0.1 0.05"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="legrihgt3_footrihgt_joint" type="fixed">
+      <origin xyz="0.05 0 -${0.45*0.5}" rpy="0 0 0"/>
+    <child link="footright_link"/>
+    <parent link="legright3_link"/>
+  </joint>
+
+  <!-- Chest -->
+  <link name="chest_link">
+    <inertial>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder radius="0.05" length="0.25"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.05" length="0.25"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="body_chest_joint" type="fixed">
+      <origin xyz="0.25 0 0" rpy="${-90 * deg_to_rad} 0 0"/>
+    <child link="chest_link"/>
+    <parent link="body_link"/>
+  </joint>
+
+  <!-- Head -->
+  <link name="head_link">
+    <inertial>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <sphere radius="0.125"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <sphere radius="0.125"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="chest_head_joint" type="fixed">
+      <origin xyz="0.15 0 0" rpy="0 0 0"/>
+    <child link="head_link"/>
+    <parent link="chest_link"/>
+  </joint>
+
+  <!-- Arm -->
+  <link name="shoulderleft_link">
+    <inertial>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <sphere radius="0.05"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <sphere radius="0.05"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="bodyleft_shoulderleft_joint" type="fixed">
+      <origin xyz="0 0 -0.25" rpy="0 0 0"/>
+    <child link="shoulderleft_link"/>
+    <parent link="bodyleft_link"/>
+  </joint>
+
+  <link name="shoulderright_link">
+    <inertial>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <sphere radius="0.05"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <sphere radius="0.05"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="bodyright_shoulderright_joint" type="fixed">
+      <origin xyz="0 0 -0.25" rpy="0 0 0"/>
+    <child link="shoulderright_link"/>
+    <parent link="bodyright_link"/>
+  </joint>
+
+  <link name="armright1_link">
+    <inertial>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder radius="0.05" length="0.25"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.05" length="0.25"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="shoulderright_armright1_joint" type="fixed">
+      <origin xyz="-0.065 0 0.11" rpy="0 ${-30 * deg_to_rad} 0"/>
+    <child link="armright1_link"/>
+    <parent link="shoulderright_link"/>
+  </joint>
+
+  <link name="armleft1_link">
+    <inertial>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder radius="0.05" length="0.25"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.05" length="0.25"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="shoulderleft_armleft1_joint" type="fixed">
+      <origin xyz="-0.065 0 0.11" rpy="0 ${-30 * deg_to_rad} 0"/>
+    <child link="armleft1_link"/>
+    <parent link="shoulderleft_link"/>
+  </joint>
+
+  <link name="armright2_link">
+    <inertial>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <sphere radius="0.05"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <sphere radius="0.05"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="armright1_armright2_joint" type="fixed">
+      <origin xyz="0 0 0.125" rpy="0 0 0"/>
+    <child link="armright2_link"/>
+    <parent link="armright1_link"/>
+  </joint>
+
+  <link name="armleft2_link">
+    <inertial>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <sphere radius="0.05"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <sphere radius="0.05"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="armleft1_armleft2_joint" type="fixed">
+      <origin xyz="0 0 0.125" rpy="0 0 0"/>
+    <child link="armleft2_link"/>
+    <parent link="armleft1_link"/>
+  </joint>
+
+  <link name="armleft3_link">
+    <inertial>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder radius="0.05" length="0.2"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.05" length="0.2"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="armleft2_armleft3_joint" type="fixed">
+      <origin xyz="-0.065 0 0.11" rpy="0 ${-30 * deg_to_rad} 0"/>
+    <child link="armleft3_link"/>
+    <parent link="armleft2_link"/>
+  </joint>
+
+  <link name="armright3_link">
+    <inertial>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder radius="0.05" length="0.2"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.05" length="0.2"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="armright2_armright3_joint" type="fixed">
+      <origin xyz="-0.065 0 0.11" rpy="0 ${-30 * deg_to_rad} 0"/>
+    <child link="armright3_link"/>
+    <parent link="armright2_link"/>
+  </joint>
+
+  <link name="handright_link">
+    <inertial>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <sphere radius="0.065"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <sphere radius="0.065"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="armrighht3_handright_joint" type="fixed">
+      <origin xyz="0 0 ${0.2*0.5}" rpy="0 0 0"/>
+    <child link="handright_link"/>
+    <parent link="armright3_link"/>
+  </joint>
+
+  <link name="handleft_link">
+    <inertial>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5"/>
+      <inertia ixx="5" ixy="0" ixz="0" iyy="5" iyz="0" izz="5"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <sphere radius="0.065"/>
+      </geometry>
+    </visual>
+    <collision>
+      <!-- origin is relative -->
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <sphere radius="0.065"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="armleft3_handleft_joint" type="fixed">
+      <origin xyz="0 0 ${0.2*0.5}" rpy="0 0 0"/>
+    <child link="handleft_link"/>
+    <parent link="armleft3_link"/>
+  </joint>
+
+
+  <!-- Colour -->
+  <gazebo reference="base_link">
+    <material>Gazebo/WoodFloor</material>
+  </gazebo>
+
+  <gazebo reference="back_link">
+    <material>Gazebo/WoodFloor</material>
+  </gazebo>
+
+  <gazebo reference="panelfront_link">
+    <material>Gazebo/Yellow</material>
+  </gazebo>
+
+  <gazebo reference="panelback_link">
+    <material>Gazebo/Yellow</material>
+  </gazebo>
+
+  <gazebo reference="base_footprint">
+    <material>Gazebo/Purple</material>
+  </gazebo>
+
+  <gazebo reference="body_link">
+    <material>Gazebo/White</material>
+  </gazebo>
+</robot>
