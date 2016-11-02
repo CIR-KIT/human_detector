@@ -377,7 +377,7 @@ void EuclideanCluster::normlize_features(svm_node *features)
 //スケーリングバリューは今は直書きしてるけど余裕があれば読み込めるようにする
 void EuclideanCluster::read_scaling_parameters(std::string scaling_parameter_file)
 {
-  scaling_parameter_file = "/home/morita/Documents/dev/ros/tc2016_ws/src/TC2016_for_thirdrobot/target_obejct_detector/model/train.csv.range";
+  //scaling_parameter_file = "/home/morita/Documents/dev/ros/tc2016_ws/src/TC2016_for_thirdrobot/target_obejct_detector/model/train.csv.range";
 
   std::ifstream ifs(scaling_parameter_file.c_str());
   std::string str;
