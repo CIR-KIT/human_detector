@@ -7,9 +7,12 @@
   <maintainer email="k104009y@mail.kyutech.jp">Arita Yuta</maintainer>
 
   <license>BSD</license>
-
+  <url type="repository">https://github.com/CIR-KIT/human_detector.git</url>
+  <url type="bugtracker">>https://github.com/CIR-KIT/human_detector/issues</url>
+  <author email="cirkit.infomation@gmail.com">CIR-KIT</author>
 
   <buildtool_depend>catkin</buildtool_depend>
   <depend>roscpp</depend>
   <depend>tf</depend>
+
 </package>
