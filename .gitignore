@@ -45,3 +45,17 @@ qtcreator-*
 
 # Catkin custom files
 CATKIN_IGNORE
+
+/target_object_detector/dataset
+dataset
+
+# vim
+.*.sw[a-z]
+*.un~
+Session.vim
+.netrwhist
+
+# qtcreator
+*.user
+*.autosave
+map
