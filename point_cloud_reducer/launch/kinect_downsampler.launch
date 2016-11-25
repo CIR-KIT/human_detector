@@ -1,0 +1,11 @@
+<launch>
+  <node name="kinect_downsampler" pkg="point_cloud_reducer" type="kinect_downsampler_node">
+    <param name="loop_rate" value="10" />
+    <param name="resized_pc_topic_name" value="/hokuyo3d/hokuyo_cloud2" />
+    <param name="source_pc_topic_name" value="/camera/depth/points" />
+    <param name="resized_pc_frame_id" value="/front_top_3durg_rgbd_optical_frame" />
+    <param name="leaf_size_x" value="0.2" />
+    <param name="leaf_size_y" value="0.2" />
+    <param name="leaf_size_z" value="0.2" />
+  </node>
+</launch>
