@@ -1,0 +1,11 @@
+<launch>
+  <param name="human_description1"
+      command="$(find xacro)/xacro.py '$(find human_model_gazebo)/urdf/human.xacro'" />
+  <node name="urdf_spawner_human1" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+	args="-urdf -model human1 -param human_description1 -x 7.2 -y 0.49 -z 0.34 -R 0 -P 0 -Y -3.05"/>
+
+  <param name="human_description2"
+      command="$(find xacro)/xacro.py '$(find human_model_gazebo)/urdf/human.xacro'" />
+  <node name="urdf_spawner_human2" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+	args="-urdf -model human2 -param human_description2 -x 5.7 -y 7.2 -z 0.3 -R 0.001 -P 0 -Y -1.6"/>
+</launch>
