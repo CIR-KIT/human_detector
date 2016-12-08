@@ -43,3 +43,6 @@ add_executable(
 target_link_libraries(kinect_downsampler_node
   ${catkin_LIBRARIES}
 )
+
+find_package(roslaunch)
+roslaunch_add_file_check(test/kinect_downsampler.test.xml)
