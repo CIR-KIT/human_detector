@@ -44,6 +44,11 @@ language:
   - generic
   - cpp
   - python
+  - clojure
+lein: lein2
+jdk:
+  - oraclejdk7
+
 cache:
   - apt
 python:
@@ -51,6 +56,8 @@ python:
 compiler:
   - gcc
 
+  
+  
 notifications:
   email:
     on_success: change
@@ -129,6 +136,7 @@ before_script:
 # Compile and test. If the CATKIN_OPTIONS file exists, use it as an argument to
 # catkin_make.
 script:
+  lein2 midje
   # for ROS
   - cd ~/catkin_ws
   - catkin_make $( [ -f $CATKIN_OPTIONS ] && cat $CATKIN_OPTIONS )
