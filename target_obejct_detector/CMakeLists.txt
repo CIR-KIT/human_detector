@@ -82,3 +82,6 @@ target_link_libraries(target_object_recognizer_node
   ${catkin_LIBRARIES}
   ${OpenCV_LIBRARIES}
 )
+
+find_package(roslaunch)
+roslaunch_add_file_check(test/target_object_detector.test.xml)
