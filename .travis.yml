@@ -105,7 +105,7 @@ before_script:
   # OpenCV install
   - mkdir ~/catkin_ws/libs
   - cd ~/catkin_ws/libs
-   - git clone https://github.com/Itseez/opencv.git
+   - git clone https://github.com/opencv/opencv.git
   - cd opencv
   - git checkout 2.4
   - mkdir build
