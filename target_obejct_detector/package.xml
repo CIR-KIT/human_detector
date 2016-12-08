@@ -12,6 +12,7 @@
   <author email="cirkit.infomation@gmail.com">CIR-KIT</author>
 
   <buildtool_depend>catkin</buildtool_depend>
+  <depend>cv_bridge</depend>
   <depend>roscpp</depend>
   <depend>rospy</depend>
 
