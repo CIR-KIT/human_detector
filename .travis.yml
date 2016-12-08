@@ -45,9 +45,6 @@ language:
   - cpp
   - python
   - clojure
-lein: lein2
-jdk:
-  - oraclejdk7
 
 cache:
   - apt
@@ -116,13 +113,7 @@ before_script:
   - cmake ..
   - make -j8
   - sudo make -j8 install
-  - cd ../..
-  - mkdir -p native/linux/x86_64
-  - cp opencv/build/lib/libopencv_java248.so native/linux/x86_64/libopencv_java248.so
-  - cp opencv/build/bin/opencv-248.jar .
-  - jar -cMf opencv-native-248.jar native
-  - lein2 localrepo install opencv-248.jar opencv/opencv 2.4.8
-  - lein2 localrepo install opencv-native-248.jar opencv/opencv-native 2.4.8
+  - export PYTHONPATH=$PYTHONPATH:/usr/lib/python2.7/site-packages/
   # source dependencies: install using wstool.
   - cd ~/catkin_ws/src
   - wstool init
@@ -136,7 +127,6 @@ before_script:
 # Compile and test. If the CATKIN_OPTIONS file exists, use it as an argument to
 # catkin_make.
 script:
-  lein2 midje
   # for ROS
   - cd ~/catkin_ws
   - catkin_make $( [ -f $CATKIN_OPTIONS ] && cat $CATKIN_OPTIONS )
