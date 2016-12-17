@@ -5,13 +5,21 @@ project(fake_target_detector)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
+  jsk_recognition_msgs
   roscpp
   roslib
   tf
 )
 
 catkin_package(
-  CATKIN_DEPENDS roscpp tf
+  INCLUDE_DIRS include
+  CATKIN_DEPENDS
+  roscpp
+  tf
+)
+
+include_directories(
+  include ${catkin_INCLUDE_DIRS}
 )
 
 add_executable(fake_target_detector_node src/fake_target_detector.cpp)
