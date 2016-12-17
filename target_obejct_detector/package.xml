@@ -5,6 +5,7 @@
   <description>The target_object_detector package</description>
 
   <maintainer email="k104009y@mail.kyutech.jp">Arita Yuta</maintainer>
+  <maintainer email="p595201m@mail.kyutech.jp">Masaru Morita</maintainer>
 
   <license>BSD</license>
   <url type="repository">https://github.com/CIR-KIT/human_detector.git</url>
