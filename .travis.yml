@@ -55,9 +55,9 @@ compiler:
   
   
 notifications:
-  #email:
-  #  on_success: change
-  #  on_failue: always
+  email:
+    on_success: never
+    on_failue: never
   #slack: cir-kit:ScokSrDzpegEnxbcXuxmWAhz
 
 # Configuration variables. All variables are global now, but this can be used to
