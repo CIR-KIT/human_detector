@@ -52,8 +52,6 @@ python:
 compiler:
   - gcc
 
-  
-  
 notifications:
   email:
     on_success: change
