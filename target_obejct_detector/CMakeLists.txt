@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   pcl_ros
   pcl_conversions
   tf
+  jsk_recognition_msgs
 )
 
 
@@ -82,3 +83,6 @@ target_link_libraries(target_object_recognizer_node
   ${catkin_LIBRARIES}
   ${OpenCV_LIBRARIES}
 )
+
+find_package(roslaunch)
+roslaunch_add_file_check(test/target_object_detector.test.xml)
