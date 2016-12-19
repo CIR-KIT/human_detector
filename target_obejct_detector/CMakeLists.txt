@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   pcl_ros
   pcl_conversions
   tf
+  jsk_recognition_msgs
 )
 
 

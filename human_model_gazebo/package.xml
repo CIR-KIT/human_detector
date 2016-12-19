@@ -13,7 +13,6 @@
 
   <buildtool_depend>catkin</buildtool_depend>
   <exec_depend>gazebo_ros</exec_depend>
-  <exec_depend>steer_drive_conroller</exec_depend>
   <exec_depend>xacro</exec_depend>
 
 </package>
