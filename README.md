@@ -66,7 +66,7 @@ Satisfying all of the following conditions invoke approching to a target.
 
 - A currently reached waypoint is placed in detecting area.
 - A target human is within 5 [m] from the robot.
-- The target is ***NOT** close to points where other targets are previously detected.
+- The target is ***NOT*** close to points where other targets are previously detected.
 
 ## Usage in GAZEBO
 
