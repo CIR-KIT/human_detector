@@ -85,5 +85,5 @@ target_link_libraries(target_object_recognizer_node
 )
 
 # these are for launchtest
-# find_package(roslaunch)
-# roslaunch_add_file_check(test/target_object_detector.test.xml)
+find_package(roslaunch)
+roslaunch_add_file_check(test/target_object_detector.test.xml)

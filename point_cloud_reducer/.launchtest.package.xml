@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>point_cloud_reducer</name>
+  <version>0.1.0</version>
+  <description>The point_cloud_reducer package</description>
+
+  <maintainer email="k104009y@mail.kyutech.jp">Arita Yuta</maintainer>
+
+  <license>BSD</license>
+  <url type="repository">https://github.com/CIR-KIT/human_detector.git</url>
+  <url type="bugtracker">https://github.com/CIR-KIT/human_detector/issues</url>
+  <author email="cirkit.infomation@gmail.com">CIR-KIT</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>roscpp</depend>
+  <depend>sensor_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>pcl_ros</depend>
+  <depend>pcl_msgs</depend>
+  <depend>tf</depend>
+  <depend>tf_conversions</depend>
+  <depend>roslaunch</depend> <!-- this is fo launchtest. -->
+
+  <build_depend>cmake_modules</build_depend>
+</package>

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>human_model_gazebo</name>
+  <version>0.1.0</version>
+  <description>The human_model_gazebo package</description>
+
+  <maintainer email="p595201m@mail.kyutech.jp">Masaru Morita</maintainer>
+
+  <license>BSD</license>
+  <url type="repository">https://github.com/CIR-KIT/human_detector.git</url>
+  <url type="bugtracker">https://github.com/CIR-KIT/human_detector/issues</url>
+  <author email="cirkit.infomation@gmail.com">CIR-KIT</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <exec_depend>gazebo_ros</exec_depend>
+  <exec_depend>xacro</exec_depend>
+  <exec_depend>roslaunch</exec_depend> <!-- this is for launchtest. -->
+
+</package>
