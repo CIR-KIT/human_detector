@@ -15,7 +15,7 @@ notifications:
 env:
   global:
     - NOT_TEST_INSTALL=true
-    - BEFORE_SCRIPT=before_script.sh
+    - BEFORE_SCRIPT=human_detector/before_script.sh
   matrix:
     - ROS_DISTRO="indigo"  ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu
     - ROS_DISTRO="indigo"  ROS_REPOSITORY_PATH=http://packages.ros.org/ros-shadow-fixed/ubuntu
