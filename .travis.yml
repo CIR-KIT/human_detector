@@ -19,7 +19,6 @@ env:
     - ROS_DISTRO="indigo"  ROS_REPOSITORY_PATH=http://packages.ros.org/ros/ubuntu BEFORE_SCRIPT=human_detector/before_script.sh
     - ROS_DISTRO="indigo"  ROS_REPOSITORY_PATH=http://packages.ros.org/ros-shadow-fixed/ubuntu BEFORE_SCRIPT=human_detector/before_script.sh
 install:
-  - git clone https://github.com/ros-industrial/industrial_ci.git .ci_config
+  - git clone -q https://github.com/ros-planning/moveit_ci.git .moveit_ci
 script:
-  - source .ci_config/travis.sh 
-#  - source ./travis.sh  # Enable this when you have a package-local script #
+  - source .moveit_ci/travis.sh
