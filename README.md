@@ -1,4 +1,4 @@
-# human_detector [![Build Status](https://travis-ci.org/CIR-KIT/human_detector.svg?branch)](https://travis-ci.org/CIR-KIT/human_detector) [![Slack](https://img.shields.io/badge/Slack-CIR--KIT-blue.svg)](http://cir-kit.slack.com/messages/human_detector)
+# human_detector [![Build Status](https://travis-ci.org/CIR-KIT/human_detector.svg?branch=indigo-devel)](https://travis-ci.org/CIR-KIT/human_detector) [![Slack](https://img.shields.io/badge/Slack-CIR--KIT-blue.svg)](http://cir-kit.slack.com/messages/human_detector)
 Human detector package for Tshukuba Challenge
 
 ## Installation
