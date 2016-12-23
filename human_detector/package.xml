@@ -15,7 +15,7 @@
   <exec_depend>fake_target_detector</exec_depend>
   <exec_depend>human_model_gazebo</exec_depend>
   <exec_depend>point_cloud_reducer</exec_depend>
-  <exec_depend>target_obejct_detector</exec_depend>
+  <exec_depend>target_object_detector</exec_depend>
 
   <export>
     <metapackage/>
