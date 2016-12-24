@@ -1,3 +1,5 @@
+# human_model_gazebo 
+
 This package provides human model as a detection target for Tsukuba Challenge.
 
 ## Usage
@@ -16,8 +18,14 @@ example:
 </launch>
 ```
 
+Specify a point of spawning the model in Gazebo coordinate.
+
 ### View a human model
 
 ```bash
 roslaunch human_model_gazebo view_human.launch
 ```
+
+![human_model_gazebo1](http://wiki.ros.org/human_model_gazebo?action=AttachFile&do=get&target=human_model_gazebo1.png)
+
+![human_model_gazebo1](http://wiki.ros.org/human_model_gazebo?action=AttachFile&do=get&target=human_model_gazebo2.png)
