@@ -37,6 +37,7 @@
 #include <pcl_ros/impl/transforms.hpp>
 
 #include <opencv/cv.h>
+#include <opencv2/imgproc/imgproc.hpp>
 
 #include <jsk_recognition_msgs/BoundingBoxArray.h>
 
